@@ -45,9 +45,13 @@ export default function Navbar() {
       <div className="mx-auto max-w-6xl flex items-center justify-between">
 
         {/* Logo */}
-        <div className="text-white font-bold text-lg">
+        <a
+          href="#top"
+          className="text-white font-bold text-lg hover:text-purple-300 transition relative group"
+        >
           Janul
-        </div>
+          <span className="absolute left-0 bottom-0 h-[2px] w-0 bg-purple-400 transition-all duration-300 group-hover:w-full" />
+        </a>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-black/40 backdrop-blur-xl">
