@@ -30,7 +30,7 @@ export default function Projects() {
           {/* CARD 2 */}
           <div className="group relative h-[320px] rounded-xl overflow-hidden bg-black shadow-lg ring-1 ring-white/10 border border-white/10 hover:border-purple-500 transition">
             <Image
-              src="/corpovinculo.png"
+              src="/Corpovinculo.png"
               alt="Corpovinculo"
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-110"
