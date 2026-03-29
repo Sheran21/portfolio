@@ -12,10 +12,26 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Janul Samaranayake",
-  description: "Full-stack developer specializing in React, Node.js, and cloud technologies. Passionate about building scalable web applications and exploring new tech trends.",
+export const metadata = {
+  title: "Janul Samaranayake | Portfolio",
+  description: "Frontend Developer Portfolio",
+  openGraph: {
+    title: "Janul Portfolio",
+    description: "Modern web developer portfolio",
+    url: "https://your-domain.vercel.app",
+    siteName: "Janul Portfolio",
+    images: [
+      {
+        url: "/preview.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    type: "website",
+  },
 };
+
+
 
 export default function RootLayout({
   children,
