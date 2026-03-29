@@ -49,6 +49,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Google Search Console verification */}
+        <meta name="google-site-verification" content="ZSqlA0A0GIasceOVEfgCCzwx0EkA0G5Ri33abUhU-f4" />
+
         {/* Structured Data for SEO */}
         <script
           type="application/ld+json"
