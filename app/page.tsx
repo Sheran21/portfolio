@@ -20,7 +20,7 @@ export default function Home() {
       <Navbar />
 
       {/* HERO */}
-      <header className="relative min-h-screen bg-black overflow-hidden flex items-center pt-20">
+      <header className="relative min-h-screen bg-black overflow-hidden flex items-center pb-16 md:pb-0">
 
         {/* BACKGROUND */}
         <div className="absolute inset-0 z-0 pointer-events-none">
