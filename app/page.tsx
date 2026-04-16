@@ -13,6 +13,7 @@ import Navbar from "@/components/Navbar";
 import ContactSection from "@/components/ContactSection";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import FloatingTech from "@/components/FloatingTechStack";
+import Footer from "@/components/Footer"
 
 export default function Home() {
   return (
@@ -151,6 +152,7 @@ export default function Home() {
       <EducationTimeline />
       <NeonDivider />
       <ContactSection />
+      <Footer />
     </div>
   );
 }
