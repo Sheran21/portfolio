@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Menu, X } from "lucide-react";
 
 const sections = [
@@ -15,7 +16,7 @@ const sections = [
 
 export default function Navbar() {
   const [active, setActive] = useState("");
-  const [open, setOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -41,60 +42,79 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="fixed top-4 left-0 w-full z-50 px-4">
-      <div className="mx-auto max-w-6xl flex items-center justify-between">
+    <>
+      <nav className="fixed top-4 left-0 right-0 z-50 px-4">
+        <div className="mx-auto max-w-7xl flex items-center justify-between">
+          
+          {/* Logo */}
+          <a
+            href="#top"
+            className="relative flex items-center justify-center group"
+            >
+            {/* glow on hover only */}
+            <div className="absolute inset-0 rounded-xl bg-purple-500/30 blur-xl opacity-0 group-hover:opacity-100 transition duration-500" />
 
-        {/* Logo */}
-        <a
-          href="#top"
-          className="text-white font-bold text-lg hover:text-purple-300 transition relative group"
-        >
-          Janul
-          <span className="absolute left-0 bottom-0 h-[2px] w-0 bg-purple-400 transition-all duration-300 group-hover:w-full" />
-        </a>
+            <Image
+              src="/logo.png"
+              alt="Janul Logo"
+              width={50}
+              height={50}
+              className="relative rounded-xl object-cover transition duration-300 group-hover:scale-105"
+            />
+          </a>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-black/40 backdrop-blur-xl">
-          {sections.map((section) => {
-            const isActive = active === section.id;
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-black/40 backdrop-blur-xl shadow-[0_0_30px_rgba(0,0,0,0.6)]">
+            {sections.map((section) => {
+              const isActive = active === section.id;
 
-            return (
+              return (
+                <a
+                  key={section.id}
+                  href={`#${section.id}`}
+                  className={`relative px-4 py-2 text-sm rounded-full transition-all duration-300 ${
+                    isActive
+                      ? "text-white"
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  {isActive && (
+                    <span className="absolute inset-0 rounded-full bg-purple-600/20 blur-md" />
+                  )}
+
+                  <span className="relative z-10">{section.label}</span>
+                </a>
+              );
+            })}
+          </div>
+
+          {/* Mobile button */}
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="md:hidden text-white"
+          >
+            {mobileOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile dropdown */}
+      {mobileOpen && (
+        <div className="fixed top-20 left-4 right-4 z-40 md:hidden rounded-2xl border border-white/10 bg-black/80 backdrop-blur-xl p-4">
+          <div className="flex flex-col gap-3">
+            {sections.map((section) => (
               <a
                 key={section.id}
                 href={`#${section.id}`}
-                className={`px-3 py-1 text-sm rounded-full transition
-                ${isActive ? "text-white" : "text-gray-400 hover:text-white"}`}
+                onClick={() => setMobileOpen(false)}
+                className="text-gray-300 hover:text-white transition"
               >
                 {section.label}
               </a>
-            );
-          })}
-        </div>
-
-        {/* Mobile Button */}
-        <button
-          onClick={() => setOpen(!open)}
-          className="md:hidden text-white"
-        >
-          {open ? <X /> : <Menu />}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      {open && (
-        <div className="mt-3 mx-auto max-w-6xl md:hidden bg-black/90 backdrop-blur-xl border border-white/10 rounded-xl p-4 flex flex-col gap-4">
-          {sections.map((section) => (
-            <a
-              key={section.id}
-              href={`#${section.id}`}
-              onClick={() => setOpen(false)}
-              className="text-gray-300 hover:text-white"
-            >
-              {section.label}
-            </a>
-          ))}
+            ))}
+          </div>
         </div>
       )}
-    </nav>
+    </>
   );
 }
