@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import ScrollReveal from "@/components/ScrollReveal";
 
 type Article = {
   title: string;
@@ -25,62 +26,67 @@ const articles: Article[] = [
 
 export default function Articles() {
   return (
-    <section id="articles" className="px-6 py-20">
+    <section id="articles" className="px-6 py-28 bg-[#050507] text-white">
       <div className="mx-auto max-w-6xl">
-        {/* Title */}
-        <h2 className="text-4xl font-bold text-white">Articles</h2>
-        <div className="mt-2 h-[3px] w-32 bg-white rounded-full" />
 
-        <p className="mt-6 text-gray-300 max-w-2xl">
-          I enjoy documenting what I learn while building projects and exploring
-          software engineering concepts.
-        </p>
+        {/* Header */}
+        <ScrollReveal direction="up">
+          <div className="flex items-center gap-4 mb-16">
+            <span className="sec-num">03</span>
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-purple-400 mb-1">Writing</p>
+              <h2 className="text-4xl font-extrabold">Articles</h2>
+              <div className="mt-2 h-[2px] w-24 bg-gradient-to-r from-purple-500 to-transparent rounded-full" />
+            </div>
+          </div>
+        </ScrollReveal>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
-          {articles.map((article) => (
-            <Link
-              key={article.title}
-              href={article.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 p-6 transition duration-300 hover:-translate-y-1 hover:border-purple-500/40 hover:shadow-[0_0_30px_rgba(168,85,247,0.25)]"
-            >
-              {/* glow background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-transparent to-fuchsia-500/10 opacity-0 transition duration-300 group-hover:opacity-100" />
+        <ScrollReveal direction="up" delay={100}>
+          <p className="text-gray-400 max-w-xl mb-10 leading-relaxed">
+            I enjoy documenting what I learn while building projects and exploring software engineering concepts.
+          </p>
+        </ScrollReveal>
 
-              {/* content */}
-              <div className="relative z-10">
-                {/* badge + meta */}
-                <div className="flex items-center justify-between mb-4">
-                  <span className="rounded-full bg-purple-500/20 px-3 py-1 text-xs font-medium text-purple-200">
-                    {article.platform}
-                  </span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {articles.map((article, i) => (
+            <ScrollReveal key={article.title} direction="up" delay={i * 100 + 150}>
+              <Link
+                href={article.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative rounded-2xl overflow-hidden border border-white/8 bg-white/[0.02] p-7
+                           transition duration-400 hover:-translate-y-1
+                           hover:border-purple-500/40
+                           hover:shadow-[0_20px_50px_rgba(168,85,247,0.15)]
+                           block"
+              >
+                {/* hover glow bg */}
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-600/8 via-transparent to-fuchsia-500/8 opacity-0 group-hover:opacity-100 transition duration-400 pointer-events-none" />
 
-                  <span className="text-xs text-gray-400">
-                    {article.readTime}
-                  </span>
+                <div className="relative z-10">
+                  {/* Badge row */}
+                  <div className="flex items-center justify-between mb-5">
+                    <span className="rounded-full bg-purple-500/15 border border-purple-500/25 px-3 py-1 text-xs font-medium text-purple-200">
+                      {article.platform}
+                    </span>
+                    <span className="text-xs text-gray-600">{article.readTime}</span>
+                  </div>
+
+                  <h3 className="text-xl font-bold text-white leading-snug group-hover:text-purple-100 transition">
+                    {article.title}
+                  </h3>
+
+                  <p className="mt-4 text-sm text-gray-400 leading-relaxed">{article.description}</p>
+
+                  <div className="mt-6 flex items-center justify-between text-sm border-t border-white/5 pt-5">
+                    <span className="text-gray-600 text-xs">{article.date}</span>
+                    <span className="text-purple-400 text-xs group-hover:translate-x-1 transition">
+                      Read on Medium →
+                    </span>
+                  </div>
                 </div>
-
-                {/* title */}
-                <h3 className="text-xl font-bold text-white leading-snug group-hover:text-purple-200 transition">
-                  {article.title}
-                </h3>
-
-                {/* description */}
-                <p className="mt-4 text-sm text-gray-300 leading-relaxed">
-                  {article.description}
-                </p>
-
-                {/* footer */}
-                <div className="mt-6 flex items-center justify-between text-sm">
-                  <span className="text-gray-400">{article.date}</span>
-                  <span className="text-purple-300 group-hover:translate-x-1 transition">
-                    Read article →
-                  </span>
-                </div>
-              </div>
-            </Link>
+              </Link>
+            </ScrollReveal>
           ))}
         </div>
       </div>
