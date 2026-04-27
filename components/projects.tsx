@@ -16,7 +16,7 @@ const projects = [
     github: "",
     live: "https://corpovinculo.com/home",
     featured: true,
-    year: "2024",
+    year: "2026",
   },
   {
     title: "Ceylon Curry Pot",
@@ -28,7 +28,7 @@ const projects = [
     github: "https://github.com/Ceylon-Curry-Pot/Food-Delivery-Website",
     live: "",
     featured: false,
-    year: "2024",
+    year: "2026",
   },
   {
     title: "Inventory Tracker",
@@ -40,7 +40,7 @@ const projects = [
     github: "https://github.com/Sheran21/CCP_Inventory_Tracker",
     live: "https://ccp-inventory-tracker.vercel.app",
     featured: false,
-    year: "2024",
+    year: "2025",
   },
   {
     title: "Save Marine Life",
@@ -52,7 +52,7 @@ const projects = [
     github: "https://github.com/Sheran21/Save-Marine-Life",
     live: "",
     featured: false,
-    year: "2023",
+    year: "2024",
   },
 ];
 
