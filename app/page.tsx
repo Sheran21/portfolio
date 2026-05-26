@@ -182,7 +182,7 @@ export default function Home() {
                               border border-purple-500/20 bg-purple-500/5
                               px-3 py-1.5 rounded-full">
                 <span className="w-1.5 h-1.5 rounded-full bg-purple-400 shrink-0" />
-                <span>Frontend Dev · UI/UX · SE Undergraduate</span>
+                <span>Full Stack Dev · UI/UX · SE Undergraduate</span>
               </div>
 
               <h1 className="hero-h1 text-[clamp(1.75rem,6.5vw,4rem)] font-extrabold leading-[1.08] tracking-tight">

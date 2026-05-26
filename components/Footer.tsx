@@ -45,8 +45,8 @@ export default function Footer() {
               </span>
             </h3>
             <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-gray-400 leading-relaxed">
-              Frontend developer focused on crafting premium digital experiences with React,
-              Next.js, design systems, and smooth UI interactions.
+              Full Stack developer focused on crafting premium digital experiences with React,
+              Next.js, Node.js, design systems, and smooth UI interactions.
             </p>
           </div>
 
@@ -72,7 +72,7 @@ export default function Footer() {
           <div>
             <h4 className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500 mb-3 sm:mb-4">Connect</h4>
             <p className="text-xs sm:text-sm text-gray-400 mb-4 leading-relaxed">
-              Open for internships, collaborations, and frontend engineering opportunities.
+              Open for internships, collaborations, and full Stack engineering opportunities.
             </p>
             <div className="flex gap-2.5 flex-wrap">
               {[

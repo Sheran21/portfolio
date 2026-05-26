@@ -13,14 +13,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Janul Samaranayake | Frontend Developer Portfolio",
+  title: "Janul Samaranayake | Full Stack Developer Portfolio",
   description:
-    "Janul Samaranayake | Frontend Developer specializing in React and Next.js, showcasing projects and skills.",
-  keywords: ["Janul Samaranayake", "Frontend Developer", "React", "Next.js", "Portfolio", "Web Developer"],
+    "Janul Samaranayake | Full Stack Developer specializing in React, Next.js, and Node.js, showcasing projects and skills.",
+  keywords: ["Janul Samaranayake", "Full Stack Developer", "React", "Next.js", "Node.js", "Portfolio", "Web Developer"],
   openGraph: {
     title: "Janul Samaranayake Portfolio",
     description:
-      "Frontend Developer portfolio showcasing projects, skills, and experience in modern web development.",
+      "Full Stack Developer portfolio showcasing projects, skills, and experience in modern web development.",
     url: "https://portfolio-janulsamaranayake.vercel.app",
     siteName: "Janul Portfolio",
     images: [
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Janul Samaranayake Portfolio",
     description:
-      "Frontend Developer portfolio showcasing projects, skills, and experience in modern web development.",
+      "Full Stack Developer portfolio showcasing projects, skills, and experience in modern web development.",
     images: ["/preview.png"],
   },
 };
@@ -65,7 +65,7 @@ export default function RootLayout({
                 "https://www.linkedin.com/in/janul-samaranayake/",
                 "https://github.com/janulsamaranayake",
               ],
-              jobTitle: "Frontend Developer",
+              jobTitle: "Full Stack Developer",
             }),
           }}
         />
@@ -74,7 +74,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {/* H1 for SEO */}
-        <h1 className="sr-only">Janul Samaranayake | Frontend Developer</h1>
+        <h1 className="sr-only">Janul Samaranayake | Full Stack Developer</h1>
         {children}
       </body>
     </html>

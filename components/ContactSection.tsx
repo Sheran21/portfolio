@@ -48,7 +48,7 @@ export default function ContactSection() {
             <div className="space-y-4 sm:space-y-5">
               <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
                 Have a project, collaboration, or opportunity?
-                I&apos;m open to internships, freelance work, and full-time frontend roles.
+                I&apos;m open to internships, freelance work, and full-time full-stack roles.
                 Let&apos;s build something great together.
               </p>
 
