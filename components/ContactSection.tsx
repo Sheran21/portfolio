@@ -79,7 +79,7 @@ export default function ContactSection() {
               {/* Availability */}
               <div className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                <p className="text-xs sm:text-sm text-emerald-300">Available for opportunities in 2025</p>
+                <p className="text-xs sm:text-sm text-emerald-300">Available for opportunities in 2026</p>
               </div>
             </div>
           </ScrollReveal>
