@@ -9,9 +9,18 @@ const articles = [
     description:
       "A reflection on my learning journey with React and Next.js, including component-based thinking, routing, and modern frontend workflows.",
     platform: "Medium",
-    date: "Latest Article",
+    date: "January 22, 2026",
     readTime: "5 min read",
     link: "https://medium.com/@samarejanula/getting-started-with-react-and-next-js-what-ive-been-learning-so-far-5a7bc5972d5f",
+  },
+  {
+    title: "From MERN to MENN: How Next.js Changed the Way I Think About Web Development",
+    description:
+      "A deep dive into my transition from the MERN stack to MENN, exploring how Next.js transforms routing, rendering, and data fetching with a more production-ready approach to building React applications.",
+    platform: "Medium",
+    date: "Latest Article",
+    readTime: "8 min read",
+    link: "https://medium.com/@samarejanula/from-mern-to-menn-how-next-js-changed-the-way-i-think-about-web-development-de4621b6eddd",
   },
 ];
 
