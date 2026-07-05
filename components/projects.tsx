@@ -26,7 +26,7 @@ const projects = [
     tag: "Full-Stack",
     tech: ["Next.js", "Auth", "Payments", "UI/UX"],
     github: "https://github.com/Ceylon-Curry-Pot/Food-Delivery-Website",
-    live: "",
+    live: "https://www.ceyloncurrypot.lk",
     featured: false,
     year: "2026",
   },
