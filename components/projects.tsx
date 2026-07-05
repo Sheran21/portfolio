@@ -31,6 +31,18 @@ const projects = [
     year: "2026",
   },
   {
+    title: "Lidan DJ Portfolio",
+    description:
+      "Modern DJ portfolio website featuring event showcases, music tracks, and media gallery with a secure admin panel. The admin dashboard allows authenticated management of events, tracks, and gallery content with real-time updates. Built as a fully responsive, production-ready web application",
+    image: "/lidan-dj.png",
+    tag: "Full-Stack",
+    tech: ["Next.js","React", "Tailwind CSS", "Vercel", "REST API", "Authentication"],
+    github: "https://github.com/ArteStruo/LidanDJ-Portfolio",
+    live: "https://lidan-dj-portfolio.vercel.app",
+    featured: false,
+    year: "2026",
+  },
+  {
     title: "Inventory Tracker",
     description:
       "Restaurant inventory management with React frontend, Node.js/Express backend, RESTful APIs, and cloud deployment on Vercel & Render.",
