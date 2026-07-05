@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, useCallback } from "react";
+import dynamic from "next/dynamic";
 import LightRays from "@/components/LightRays";
 import Image from "next/image";
 import SkillsSection from "@/components/SkillsSection";
@@ -16,7 +18,13 @@ import FloatingTech from "@/components/FloatingTechStack";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 
+// Dynamically import splash so it doesn't SSR (it uses canvas + window)
+const SplashScreen = dynamic(() => import("@/components/SplashScreen"), { ssr: false });
+
 export default function Home() {
+  const [splashDone, setSplashDone] = useState(false);
+  const handleSplashDone = useCallback(() => setSplashDone(true), []);
+
   return (
     <>
       <style>{`
@@ -24,13 +32,11 @@ export default function Home() {
 
         body {
           font-family: 'DM Sans', sans-serif;
-          /* Prevent ANY horizontal overflow site-wide */
           overflow-x: hidden;
           max-width: 100vw;
         }
         h1, h2, h3 { font-family: 'Syne', sans-serif; }
 
-        /* ── Custom cursor: ONLY on pointer-fine (mouse) devices ── */
         @media (pointer: fine) {
           * { cursor: none !important; }
           #cursor-dot {
@@ -49,7 +55,6 @@ export default function Home() {
           body:has(a:hover) #cursor-ring,
           body:has(button:hover) #cursor-ring { transform: scale(1.6) !important; }
         }
-        /* Hide cursors on touch devices */
         @media (pointer: coarse) {
           #cursor-dot, #cursor-ring { display: none !important; }
         }
@@ -58,12 +63,12 @@ export default function Home() {
           from { opacity: 0; transform: translateY(24px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        .hero-tag  { animation: heroFadeUp 0.6s cubic-bezier(.22,.68,0,1.05) 0.2s  both; }
-        .hero-h1   { animation: heroFadeUp 0.7s cubic-bezier(.22,.68,0,1.05) 0.38s both; }
-        .hero-desc { animation: heroFadeUp 0.7s cubic-bezier(.22,.68,0,1.05) 0.54s both; }
-        .hero-btns { animation: heroFadeUp 0.7s cubic-bezier(.22,.68,0,1.05) 0.68s both; }
-        .hero-soc  { animation: heroFadeUp 0.6s cubic-bezier(.22,.68,0,1.05) 0.80s both; }
-        .hero-img  { animation: heroFadeUp 0.8s cubic-bezier(.22,.68,0,1.05) 0.1s  both; }
+        .hero-tag  { animation: heroFadeUp 0.6s cubic-bezier(.22,.68,0,1.05) 0.15s both; }
+        .hero-h1   { animation: heroFadeUp 0.7s cubic-bezier(.22,.68,0,1.05) 0.30s both; }
+        .hero-desc { animation: heroFadeUp 0.7s cubic-bezier(.22,.68,0,1.05) 0.44s both; }
+        .hero-btns { animation: heroFadeUp 0.7s cubic-bezier(.22,.68,0,1.05) 0.56s both; }
+        .hero-soc  { animation: heroFadeUp 0.6s cubic-bezier(.22,.68,0,1.05) 0.66s both; }
+        .hero-img  { animation: heroFadeUp 0.8s cubic-bezier(.22,.68,0,1.05) 0.05s both; }
 
         @keyframes scrollBounce {
           0%, 100% { transform: translateX(-50%) translateY(0);    opacity: 1;   }
@@ -76,12 +81,6 @@ export default function Home() {
           background-size: 28px 28px;
         }
 
-        /*
-          sec-num: the ghost section numbers (01, 02 …)
-          KEY FIX: use overflow:hidden + a contained max-width so they never
-          push the page wider than 100vw on mobile.
-          clamp(2.5rem, 10vw, 6rem) = 40px on tiny phones → 96px on desktop.
-        */
         .sec-num {
           font-family: 'Syne', sans-serif;
           font-size: clamp(2.5rem, 10vw, 6rem);
@@ -92,15 +91,14 @@ export default function Home() {
           -webkit-text-fill-color: transparent;
           user-select: none;
           pointer-events: none;
-          /* Critical: don't let this flex item grow or shrink weirdly */
           flex-shrink: 0;
-          /* Clip any overflow just in case */
           overflow: hidden;
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>
 
+      {/* Custom cursor */}
       <div id="cursor-dot" />
       <div id="cursor-ring" />
       <script dangerouslySetInnerHTML={{ __html: `
@@ -116,17 +114,26 @@ export default function Home() {
         })();
       `}} />
 
+      {/* Splash — always rendered until done, then unmounts */}
+      {!splashDone && <SplashScreen onDone={handleSplashDone} />}
+
       {/*
-        overflow-x:hidden on the root wrapper as a second safety net.
-        overflow-x on body alone sometimes doesn't catch absolutely-positioned children.
+        Portfolio fades in from slightly below as the splash exits.
+        Starts invisible, transitions to visible once splashDone fires.
       */}
-      <div id="top" className="bg-[#050507] text-white overflow-x-hidden">
+      <div
+        id="top"
+        className="bg-[#050507] text-white overflow-x-hidden"
+        style={{
+          opacity:    splashDone ? 1 : 0,
+          transform:  splashDone ? "translateY(0)" : "translateY(18px)",
+          transition: splashDone ? "opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1)" : "none",
+        }}
+      >
         <Navbar />
 
         {/* ── HERO ── */}
         <header className="relative min-h-screen bg-[#050507] overflow-hidden flex items-center dot-grid">
-
-          {/* Light rays */}
           <div className="absolute inset-0 z-0 pointer-events-none">
             <LightRays
               raysOrigin="top-center" raysColor="#6d28d9" raysSpeed={0.8}
@@ -136,16 +143,13 @@ export default function Home() {
             />
           </div>
 
-          {/* Floating tech icons — desktop only (already hidden on mobile via component) */}
           <FloatingTech />
 
-          {/* Glow blobs */}
           <div className="absolute inset-0 z-[1] pointer-events-none">
             <div className="absolute left-1/2 top-28 -translate-x-1/2 h-[400px] w-[400px] bg-purple-700/15 blur-[100px] rounded-full" />
             <div className="absolute inset-0 bg-gradient-to-b from-[#050507]/20 via-[#050507]/30 to-[#050507]" />
           </div>
 
-          {/* Content */}
           <div className="relative z-10 mx-auto max-w-5xl px-5 sm:px-6 w-full
                           pt-28 pb-24 md:pt-0 md:pb-0
                           flex flex-col items-center gap-8
@@ -160,7 +164,7 @@ export default function Home() {
                      style={{ clipPath: "inset(3px round 9999px)" }} />
                 <Image
                   src="/me.png" alt="Janul Samaranayake"
-                  width={160} height={160} priority
+                  width={175} height={175} priority
                   className="relative w-[130px] h-[130px] sm:w-[155px] sm:h-[155px] md:w-[175px] md:h-[175px]
                              rounded-full object-cover aspect-square z-10"
                 />
@@ -173,16 +177,13 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Text block */}
+            {/* Text */}
             <div className="text-center md:text-left w-full min-w-0">
-
-              {/* Role tag */}
               <div className="hero-tag inline-flex items-center gap-2 mb-4
                               text-[10px] sm:text-xs text-purple-300 tracking-[0.12em] uppercase
-                              border border-purple-500/20 bg-purple-500/5
-                              px-3 py-1.5 rounded-full">
+                              border border-purple-500/20 bg-purple-500/5 px-3 py-1.5 rounded-full">
                 <span className="w-1.5 h-1.5 rounded-full bg-purple-400 shrink-0" />
-                <span>Full Stack Dev · UI/UX · SE Undergraduate</span>
+                <span>Frontend Dev · UI/UX · SE Undergraduate</span>
               </div>
 
               <h1 className="hero-h1 text-[clamp(1.75rem,6.5vw,4rem)] font-extrabold leading-[1.08] tracking-tight">
@@ -203,7 +204,6 @@ export default function Home() {
                 <span className="text-white font-medium">smooth interactions</span>.
               </p>
 
-              {/* CTA buttons */}
               <div className="hero-btns mt-6 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                 <a href="#projects"
                    className="relative overflow-hidden text-center px-6 py-3 rounded-xl
@@ -226,7 +226,6 @@ export default function Home() {
                 </a>
               </div>
 
-              {/* Social links */}
               <div className="hero-soc mt-5 flex gap-3 justify-center md:justify-start flex-wrap">
                 {[
                   { href: "https://github.com/Sheran21", icon: <FaGithub size={15} />, label: "GitHub" },
@@ -243,7 +242,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Scroll cue */}
           <div className="scroll-cue absolute bottom-6 left-1/2
                           flex flex-col items-center gap-2 text-gray-500
                           text-[10px] tracking-[0.2em] uppercase z-10 pointer-events-none">
