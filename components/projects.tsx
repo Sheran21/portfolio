@@ -38,7 +38,7 @@ const projects = [
     tag: "Full-Stack",
     tech: ["Next.js","React", "Tailwind CSS", "Vercel", "REST API", "Authentication"],
     github: "https://github.com/ArteStruo/LidanDJ-Portfolio",
-    live: "https://lidan-dj-portfolio.vercel.app",
+    live: "https://www.lidanmusic.com",
     featured: false,
     year: "2026",
   },
