@@ -167,13 +167,7 @@ export default function Home() {
                   width={175} height={175} priority
                   className="relative w-[130px] h-[130px] sm:w-[155px] sm:h-[155px] md:w-[175px] md:h-[175px]
                              rounded-full object-cover aspect-square z-10"
-                />
-                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 z-20
-                               flex items-center gap-1.5 px-3 py-1 rounded-full
-                               bg-[#050507] border border-white/10 text-[11px] whitespace-nowrap shadow-lg">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                  Open to work
-                </div>
+                /> 
               </div>
             </div>
 
@@ -183,7 +177,7 @@ export default function Home() {
                               text-[10px] sm:text-xs text-purple-300 tracking-[0.12em] uppercase
                               border border-purple-500/20 bg-purple-500/5 px-3 py-1.5 rounded-full">
                 <span className="w-1.5 h-1.5 rounded-full bg-purple-400 shrink-0" />
-                <span>Frontend Dev · UI/UX · SE Undergraduate</span>
+                <span>SWE Intern @ itZorix · SE Undergraduate</span>
               </div>
 
               <h1 className="hero-h1 text-[clamp(1.75rem,6.5vw,4rem)] font-extrabold leading-[1.08] tracking-tight">
@@ -198,7 +192,7 @@ export default function Home() {
                               rounded-full mx-auto md:mx-0" />
 
               <p className="hero-desc text-sm sm:text-base text-gray-400 max-w-xl mx-auto md:mx-0 leading-relaxed">
-                I build clean, modern web experiences with React &amp; Next.js — focused on{" "}
+                I build clean, modern web experiences with React &amp; Next.js  focused on{" "}
                 <span className="text-white font-medium">performance</span>,{" "}
                 <span className="text-white font-medium">design systems</span>, and{" "}
                 <span className="text-white font-medium">smooth interactions</span>.
