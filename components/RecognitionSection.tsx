@@ -1,10 +1,11 @@
 "use client";
 
+import { Trophy, Medal, Crown, Star, ShieldCheck, GraduationCap, Rocket, Radio, type LucideIcon } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 
-const achievements = [
+const achievements: { icon: LucideIcon; title: string; subtitle: string; year: string; description: string; tier: string }[] = [
   {
-    icon: "🏆",
+    icon: Trophy,
     title: "Best Team Pitch Award",
     subtitle: "Pitch60 — APIIT",
     year: "2026",
@@ -12,7 +13,7 @@ const achievements = [
     tier: "gold",
   },
   {
-    icon: "🥉",
+    icon: Medal,
     title: "3rd Place Winner",
     subtitle: "Startup Today — KDU",
     year: "2026",
@@ -20,7 +21,7 @@ const achievements = [
     tier: "bronze",
   },
   {
-    icon: "👑",
+    icon: Crown,
     title: "House Captain",
     subtitle: "Highlands College",
     year: "2019",
@@ -28,7 +29,7 @@ const achievements = [
     tier: "silver",
   },
   {
-    icon: "⭐",
+    icon: Star,
     title: "Vice House Captain",
     subtitle: "Highlands College",
     year: "2018",
@@ -36,7 +37,7 @@ const achievements = [
     tier: "silver",
   },
   {
-    icon: "🛡️",
+    icon: ShieldCheck,
     title: "Youth Cyber Security Summit",
     subtitle: "Participant",
     year: "2019",
@@ -44,7 +45,7 @@ const achievements = [
     tier: "default",
   },
   {
-    icon: "🎓",
+    icon: GraduationCap,
     title: "Nationwide Scholarship",
     subtitle: "ESOFT — FIT",
     year: "",
@@ -52,7 +53,7 @@ const achievements = [
     tier: "default",
   },
   {
-    icon: "🚀",
+    icon: Rocket,
     title: "IX25 Participation",
     subtitle: "Innovation Expo",
     year: "2025",
@@ -60,7 +61,7 @@ const achievements = [
     tier: "default",
   },
   {
-    icon: "🎙️",
+    icon: Radio,
     title: "Club Member",
     subtitle: "Radio Club · ICT Society · Science & Tech",
     year: "",
@@ -76,9 +77,17 @@ const tierStyle: Record<string, string> = {
   default: "border-white/8       hover:border-purple-500/30 hover:shadow-[0_0_24px_rgba(168,85,247,0.1)]",
 };
 
+// Icon tile colours per tier
+const tierIcon: Record<string, string> = {
+  gold:    "text-yellow-300 border-yellow-400/30 bg-gradient-to-br from-yellow-400/20 to-yellow-400/[0.03] shadow-[0_8px_24px_-12px_rgba(250,204,21,0.8)]",
+  bronze:  "text-orange-300 border-orange-400/30 bg-gradient-to-br from-orange-400/20 to-orange-400/[0.03] shadow-[0_8px_24px_-12px_rgba(251,146,60,0.8)]",
+  silver:  "text-slate-200 border-slate-300/25 bg-gradient-to-br from-slate-300/15 to-slate-300/[0.03] shadow-[0_8px_24px_-12px_rgba(203,213,225,0.6)]",
+  default: "text-violet-300 border-violet-400/25 bg-gradient-to-br from-violet-500/20 to-violet-500/[0.03] shadow-[0_8px_24px_-12px_rgba(139,92,246,0.8)]",
+};
+
 export default function RecognitionSection() {
   return (
-    <section id="recognition" className="overflow-x-hidden px-4 sm:px-6 py-20 sm:py-28 bg-[#050507] text-white">
+    <section id="recognition" className="overflow-x-hidden px-4 sm:px-6 py-20 sm:py-28 bg-[var(--bg)] text-white">
       <div className="max-w-6xl mx-auto">
 
         <ScrollReveal direction="up">
@@ -86,7 +95,7 @@ export default function RecognitionSection() {
             <span className="sec-num">05</span>
             <div>
               <p className="text-xs uppercase tracking-[0.3em] text-purple-400 mb-1">Achievements</p>
-              <h2 className="text-3xl sm:text-4xl font-extrabold">Recognition</h2>
+              <h2 className="text-4xl sm:text-5xl"><span className="font-accent text-violet-300">Recognition</span></h2>
               <div className="mt-2 h-[2px] w-20 sm:w-24 bg-gradient-to-r from-purple-500 to-transparent rounded-full" />
             </div>
           </div>
@@ -100,7 +109,12 @@ export default function RecognitionSection() {
                               transition-all duration-300 ${tierStyle[item.tier]}`}>
 
                 <div className="flex items-start justify-between mb-3">
-                  <span className="text-2xl sm:text-3xl leading-none">{item.icon}</span>
+                  <span
+                    aria-hidden
+                    className={`flex h-11 w-11 items-center justify-center rounded-xl border transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:rotate-[-4deg] ${tierIcon[item.tier]}`}
+                  >
+                    <item.icon size={20} strokeWidth={1.75} />
+                  </span>
                   {item.year && (
                     <span className="text-[10px] font-mono text-gray-600 border border-white/8 px-2 py-0.5 rounded-full">
                       {item.year}

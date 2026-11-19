@@ -1,14 +1,21 @@
 "use client";
 
+import type { ComponentType } from "react";
+import { Palette, Workflow, BadgeCheck } from "lucide-react";
+import { FaJava } from "react-icons/fa";
+import { SiTypescript, SiReact, SiPython } from "react-icons/si";
 import ScrollReveal from "@/components/ScrollReveal";
 
-const certificates = [
-  { title: "Java Essential Training",      issuer: "LinkedIn Learning",      category: "Programming", icon: "☕" },
-  { title: "Learning TypeScript",          issuer: "LinkedIn Learning",      category: "Programming", icon: "🔷" },
-  { title: "React Essential Training",     issuer: "LinkedIn Learning",      category: "Frontend",    icon: "⚛️" },
-  { title: "Python for Beginners",         issuer: "University of Moratuwa", category: "Programming", icon: "🐍" },
-  { title: "Web Design for Beginners",     issuer: "University of Moratuwa", category: "Design",      icon: "🎨" },
-  { title: "Agile Workshop",               issuer: "Leo Club of IIT",        category: "Methodology", icon: "🔄" },
+type IconType = ComponentType<{ size?: number; className?: string; strokeWidth?: number }>;
+
+// Brand logos for technology certificates, Lucide icons for everything else
+const certificates: { title: string; issuer: string; category: string; icon: IconType; tint: string }[] = [
+  { title: "Java Essential Training",  issuer: "LinkedIn Learning",      category: "Programming", icon: FaJava,       tint: "#f87171" },
+  { title: "Learning TypeScript",      issuer: "LinkedIn Learning",      category: "Programming", icon: SiTypescript, tint: "#3b82f6" },
+  { title: "React Essential Training", issuer: "LinkedIn Learning",      category: "Frontend",    icon: SiReact,      tint: "#61dafb" },
+  { title: "Python for Beginners",     issuer: "University of Moratuwa", category: "Programming", icon: SiPython,     tint: "#facc15" },
+  { title: "Web Design for Beginners", issuer: "University of Moratuwa", category: "Design",      icon: Palette,      tint: "#f472b6" },
+  { title: "Agile Workshop",           issuer: "Leo Club of IIT",        category: "Methodology", icon: Workflow,     tint: "#fbbf24" },
 ];
 
 const categoryColor: Record<string, string> = {
@@ -25,7 +32,7 @@ const issuers = [
 
 export default function CertificatesSection() {
   return (
-    <section id="certificates" className="py-20 sm:py-28 bg-[#050507] text-white overflow-hidden">
+    <section id="certificates" className="py-20 sm:py-28 bg-[var(--bg)] text-white overflow-hidden">
 
       {/* Header */}
       <div className="overflow-x-hidden px-4 sm:px-6">
@@ -35,7 +42,7 @@ export default function CertificatesSection() {
               <span className="sec-num">04</span>
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-purple-400 mb-1">Continuous learning</p>
-                <h2 className="text-3xl sm:text-4xl font-extrabold">Certificates</h2>
+                <h2 className="text-4xl sm:text-5xl"><span className="font-accent text-violet-300">Certified</span> learning</h2>
                 <div className="mt-2 h-[2px] w-20 sm:w-24 bg-gradient-to-r from-purple-500 to-transparent rounded-full" />
               </div>
             </div>
@@ -82,7 +89,13 @@ export default function CertificatesSection() {
                                hover:shadow-[0_10px_40px_rgba(168,85,247,0.1)]
                                active:scale-[0.98]">
                   <div className="flex items-start justify-between mb-3 sm:mb-4">
-                    <span className="text-2xl sm:text-3xl leading-none">{cert.icon}</span>
+                    <span
+                      aria-hidden
+                      className="flex h-11 w-11 items-center justify-center rounded-xl border transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:rotate-[-4deg]"
+                      style={{ color: cert.tint, borderColor: `${cert.tint}40`, background: `linear-gradient(145deg, ${cert.tint}26, ${cert.tint}0a)`, boxShadow: `0 8px 24px -12px ${cert.tint}` }}
+                    >
+                      <cert.icon size={20} />
+                    </span>
                     <span className={`text-[9px] sm:text-[10px] font-medium uppercase tracking-wider px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full border ${categoryColor[cert.category] ?? "bg-purple-500/10 border-purple-500/20 text-purple-300"}`}>
                       {cert.category}
                     </span>
@@ -90,7 +103,10 @@ export default function CertificatesSection() {
                   <h3 className="text-sm sm:text-base font-bold leading-snug group-hover:text-purple-100 transition">
                     {cert.title}
                   </h3>
-                  <p className="mt-1.5 text-[11px] sm:text-xs text-gray-500">Issued by {cert.issuer}</p>
+                  <p className="mt-1.5 flex items-center gap-1.5 text-[11px] sm:text-xs text-gray-500">
+                    <BadgeCheck size={13} className="text-violet-300/70" aria-hidden />
+                    Issued by {cert.issuer}
+                  </p>
                 </div>
               </ScrollReveal>
             ))}

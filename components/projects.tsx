@@ -73,7 +73,7 @@ const rest = projects.filter(p => !p.featured);
 
 export default function Projects() {
   return (
-    <section id="projects" className="overflow-x-hidden px-4 sm:px-6 py-20 sm:py-28 bg-[#050507] text-white">
+    <section id="projects" className="overflow-x-hidden px-4 sm:px-6 py-20 sm:py-28 bg-[var(--bg)] text-white">
       <div className="mx-auto max-w-7xl">
 
         {/* Header */}
@@ -82,7 +82,7 @@ export default function Projects() {
             <span className="sec-num">02</span>
             <div>
               <p className="text-xs uppercase tracking-[0.3em] text-purple-400 mb-1">What I&apos;ve built</p>
-              <h2 className="text-3xl sm:text-4xl font-extrabold">Projects</h2>
+              <h2 className="text-4xl sm:text-5xl">Selected <span className="font-accent text-violet-300">work</span></h2>
               <div className="mt-2 h-[2px] w-20 sm:w-24 bg-gradient-to-r from-purple-500 to-transparent rounded-full" />
             </div>
           </div>

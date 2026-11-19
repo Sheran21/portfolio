@@ -323,7 +323,7 @@ export default function SplashScreen({ onDone }: { onDone: () => void }) {
 
       {/* Full-screen overlay */}
       <div
-        className="fixed inset-0 z-[9999] overflow-hidden bg-[#050507]"
+        className="fixed inset-0 z-[9999] overflow-hidden bg-[var(--bg)]"
         style={{
           transition: "opacity 0.85s cubic-bezier(.4,0,.2,1), transform 0.85s cubic-bezier(.4,0,.2,1)",
           opacity:    exiting ? 0 : 1,
@@ -345,7 +345,7 @@ export default function SplashScreen({ onDone }: { onDone: () => void }) {
           <>
             {/* Dark overlay ABOVE the scan line (unrevealed area) */}
             <div
-              className="absolute left-0 right-0 top-0 z-[18] pointer-events-none bg-[#050507]"
+              className="absolute left-0 right-0 top-0 z-[18] pointer-events-none bg-[var(--bg)]"
               style={{ height: `${scanY}vh` }}
             />
             {/* The glowing scan line itself */}
@@ -407,7 +407,7 @@ export default function SplashScreen({ onDone }: { onDone: () => void }) {
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
-                fontFamily: "'Syne', sans-serif",
+                fontFamily: "var(--font-display), sans-serif",
                 minWidth: "280px",
                 display: "inline-block",
               }}
@@ -417,7 +417,7 @@ export default function SplashScreen({ onDone }: { onDone: () => void }) {
 
             {/* Role */}
             <p className="sp-show-3 mt-3 text-xs sm:text-sm text-white/30 tracking-widest">
-              Full Stack Developer · Software Engineering Undergraduate
+              Software Engineer · itZorix
             </p>
           </div>
 

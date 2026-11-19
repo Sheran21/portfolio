@@ -1,34 +1,21 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { FaGithub, FaLinkedin, FaArrowUp, FaEnvelope } from "react-icons/fa";
+
+const FooterWaves = dynamic(() => import("@/components/FooterWaves"), { ssr: false });
 
 export default function Footer() {
   return (
-    <footer className="relative mt-16 sm:mt-24 overflow-hidden border-t border-white/10">
+    <footer className="relative isolate mt-16 sm:mt-24 overflow-hidden border-t border-white/10 bg-[var(--bg)]">
 
-      {/* CSS Aurora */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <style>{`
-          @keyframes aur1 { 0%,100%{transform:translateX(-20%) translateY(0)   rotate(-5deg) scaleX(1.2)} 50%{transform:translateX(10%)  translateY(-15%) rotate(5deg)  scaleX(0.9)} }
-          @keyframes aur2 { 0%,100%{transform:translateX(20%)  translateY(10%)  rotate(8deg)  scaleX(0.85)} 50%{transform:translateX(-5%)  translateY(-10%) rotate(-4deg) scaleX(1.15)} }
-          @keyframes aur3 { 0%,100%{transform:translateX(0%)   translateY(-5%)  rotate(-3deg) scaleX(1)}    50%{transform:translateX(-15%) translateY(8%)   rotate(6deg)  scaleX(1.3)} }
-          .aur { will-change: transform; }
-        `}</style>
-        <div className="aur absolute left-[-20%] top-[10%] w-[120%] h-[160px] rounded-full opacity-25"
-             style={{ background: "radial-gradient(ellipse at center, #7c3aed 0%, transparent 70%)", filter: "blur(48px)", animation: "aur1 14s ease-in-out infinite" }} />
-        <div className="aur absolute left-[10%] top-[30%] w-[100%] h-[120px] rounded-full opacity-20"
-             style={{ background: "radial-gradient(ellipse at center, #c084fc 0%, transparent 70%)", filter: "blur(56px)", animation: "aur2 18s ease-in-out infinite" }} />
-        <div className="aur absolute right-[-10%] top-[5%] w-[80%] h-[180px] rounded-full opacity-15"
-             style={{ background: "radial-gradient(ellipse at center, #a855f7 0%, transparent 70%)", filter: "blur(64px)", animation: "aur3 22s ease-in-out infinite" }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/80 to-black" />
-      </div>
-
-      {/* Glow accents */}
-      <div className="absolute left-1/4 top-0 h-32 w-32 rounded-full bg-purple-600/15 blur-3xl pointer-events-none" />
-      <div className="absolute right-1/4 bottom-0 h-40 w-40 rounded-full bg-fuchsia-500/15 blur-3xl pointer-events-none" />
+      {/* three.js particle waves (GPU-animated, pauses offscreen) */}
+      <FooterWaves />
+      {/* keep the copy readable over the waves */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[var(--bg)] via-[var(--bg)]/75 to-transparent" aria-hidden="true" />
 
       {/* Content */}
-      <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 py-12 sm:py-16">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 pt-12 sm:pt-16 pb-0">
 
         {/* 1-col mobile → 3-col md */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-10 md:gap-12">
@@ -45,8 +32,8 @@ export default function Footer() {
               </span>
             </h3>
             <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-gray-400 leading-relaxed">
-              Full Stack developer focused on crafting premium digital experiences with React,
-              Next.js, Node.js, design systems, and smooth UI interactions.
+              Software Engineer at itZorix building reliable software end to end —
+              web and mobile apps, backend services, APIs and cloud infrastructure.
             </p>
           </div>
 
@@ -72,7 +59,7 @@ export default function Footer() {
           <div>
             <h4 className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500 mb-3 sm:mb-4">Connect</h4>
             <p className="text-xs sm:text-sm text-gray-400 mb-4 leading-relaxed">
-              Open for internships, collaborations, and full Stack engineering opportunities.
+              Let&apos;s connect about software, products and engineering ideas.
             </p>
             <div className="flex gap-2.5 flex-wrap">
               {[
@@ -99,10 +86,19 @@ export default function Footer() {
         <div className="mt-10 sm:mt-14 h-px w-full bg-gradient-to-r from-transparent via-purple-500/40 to-transparent" />
 
         {/* Bottom */}
-        <div className="mt-5 sm:mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
-          <p>© {new Date().getFullYear()} Janul Samaranayake. Built with Next.js &amp; Tailwind CSS.</p>
-          <p className="italic text-purple-400/60">Designed to leave a lasting impression.</p>
+        <div className="mt-5 sm:mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[var(--ink-muted)]">
+          <p>© {new Date().getFullYear()} Janul Samaranayake. Built with Next.js, Tailwind CSS &amp; three.js.</p>
+          <p className="font-accent text-sm text-violet-300/80">Designed &amp; engineered with care.</p>
         </div>
+
+        {/* Oversized wordmark sign-off, sitting on the waves */}
+        <p
+          aria-hidden="true"
+          className="pointer-events-none mt-6 select-none text-center font-display font-extrabold leading-[0.78] tracking-[-0.06em]
+                     text-[clamp(4.5rem,21vw,17rem)] bg-gradient-to-b from-white/[0.16] via-white/[0.05] to-transparent bg-clip-text text-transparent"
+        >
+          Janul
+        </p>
       </div>
     </footer>
   );
