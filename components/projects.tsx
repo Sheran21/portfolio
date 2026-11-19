@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { FaGithub } from "react-icons/fa";
-import { FaArrowUpRightFromSquare } from "react-icons/fa6";
+import { ArrowUpRight } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 
 const projects = [
@@ -71,137 +71,148 @@ const projects = [
 const featured = projects.find(p => p.featured)!;
 const rest = projects.filter(p => !p.featured);
 
+type Project = (typeof projects)[number];
+
+/** Live / Code links, shared by both card styles. */
+function ProjectLinks({ project, size = "md" }: { project: Project; size?: "md" | "lg" }) {
+  const big = size === "lg";
+  return (
+    <div className="flex flex-wrap items-center gap-2.5">
+      {project.live && (
+        <a
+          href={project.live}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Open the ${project.title} live site`}
+          className={`group/link inline-flex items-center gap-1.5 rounded-full bg-white font-semibold text-black transition
+                      hover:bg-violet-200 ${big ? "min-h-[46px] px-5 text-sm" : "min-h-[40px] px-4 text-[13px]"}`}
+        >
+          Live site
+          <ArrowUpRight size={big ? 16 : 14} className="transition-transform duration-300 group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5" />
+        </a>
+      )}
+      {project.github && (
+        <a
+          href={project.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`View the ${project.title} source code on GitHub`}
+          className={`inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.03] font-medium text-[var(--ink-muted)]
+                      transition hover:border-violet-300/40 hover:text-white ${big ? "min-h-[46px] px-5 text-sm" : "min-h-[40px] px-4 text-[13px]"}`}
+        >
+          <FaGithub size={big ? 15 : 14} /> Code
+        </a>
+      )}
+    </div>
+  );
+}
+
+function TechList({ tech }: { tech: string[] }) {
+  return (
+    <ul className="flex flex-wrap gap-1.5" aria-label="Technologies">
+      {tech.map(t => (
+        <li key={t} className="rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1 font-mono text-[11px] text-[var(--ink-muted)]">
+          {t}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** "01 · 2026 · SaaS Platform" meta line */
+function Meta({ index, project }: { index: number; project: Project }) {
+  return (
+    <p className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ink-dim)]">
+      <span className="text-violet-300">{String(index).padStart(2, "0")}</span>
+      <span className="h-px w-5 bg-white/15" />
+      <span>{project.year}</span>
+      <span aria-hidden>·</span>
+      <span>{project.tag}</span>
+    </p>
+  );
+}
+
 export default function Projects() {
   return (
-    <section id="projects" className="overflow-x-hidden px-4 sm:px-6 py-20 sm:py-28 bg-[var(--bg)] text-white">
-      <div className="mx-auto max-w-7xl">
+    <section id="projects" className="overflow-x-hidden bg-[var(--bg)] px-4 py-20 text-white sm:px-6 sm:py-28">
+      <div className="mx-auto max-w-6xl">
 
         {/* Header */}
         <ScrollReveal direction="up">
-          <div className="flex items-center gap-3 sm:gap-4 mb-10 sm:mb-16">
-            <span className="sec-num">02</span>
-            <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-purple-400 mb-1">What I&apos;ve built</p>
-              <h2 className="text-4xl sm:text-5xl">Selected <span className="font-accent text-violet-300">work</span></h2>
-              <div className="mt-2 h-[2px] w-20 sm:w-24 bg-gradient-to-r from-purple-500 to-transparent rounded-full" />
+          <div className="mb-10 flex flex-col gap-6 sm:mb-14 md:flex-row md:items-end md:justify-between">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <span className="sec-num">02</span>
+              <div>
+                <p className="mb-1 text-xs uppercase tracking-[0.3em] text-purple-400">What I&apos;ve built</p>
+                <h2 className="text-4xl sm:text-5xl">Selected <span className="font-accent text-violet-300">work</span></h2>
+              </div>
             </div>
+            <p className="max-w-sm text-sm leading-relaxed text-[var(--ink-muted)] md:text-right">
+              Products I&apos;ve designed and shipped — from SaaS platforms to full-stack apps for real businesses.
+            </p>
           </div>
         </ScrollReveal>
 
-        {/* ── Featured card ── */}
+        {/* ── Featured ── */}
         <ScrollReveal direction="up" delay={100}>
-          <div className="group relative rounded-2xl sm:rounded-3xl overflow-hidden border border-white/8 mb-5 sm:mb-6
-                          hover:border-purple-500/40 transition-all duration-500
-                          hover:shadow-[0_30px_80px_rgba(168,85,247,0.15)]">
-
-            {/* Image */}
-            <div className="relative h-[240px] sm:h-[340px] lg:h-[440px] w-full">
-              <Image src={featured.image} alt={featured.title} fill priority
-                className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                style={{ willChange: "transform" }} />
-              {/* gradient covers full card on mobile, half on desktop */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/20
-                                              lg:bg-gradient-to-r lg:from-black lg:via-black/75 lg:to-transparent" />
+          <article className="group grid overflow-hidden rounded-3xl border border-white/10 bg-white/[0.02] transition-colors duration-500
+                              hover:border-violet-400/30 lg:grid-cols-[1.35fr_1fr]">
+            <div className="relative aspect-[16/10] overflow-hidden bg-black lg:aspect-auto lg:min-h-[420px]">
+              <Image
+                src={featured.image}
+                alt={`${featured.title} website shown on a laptop`}
+                fill
+                priority
+                sizes="(min-width: 1024px) 640px, 100vw"
+                className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+              />
+              <span className="absolute left-4 top-4 rounded-full border border-white/15 bg-black/50 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-lime-200 backdrop-blur-md">
+                Featured
+              </span>
             </div>
 
-            {/* Overlay content */}
-            <div className="absolute inset-0 flex flex-col justify-end p-5 sm:p-8 lg:p-12">
-              {/* Badges */}
-              <div className="flex flex-wrap items-center gap-2 mb-3">
-                <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.25em] text-purple-300 bg-purple-600/25 border border-purple-500/30 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full">
-                  {featured.tag}
-                </span>
-                <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-2 py-0.5 rounded-full">
-                  Frontend Lead
-                </span>
-                <span className="text-[9px] sm:text-[10px] text-gray-500 font-mono">{featured.year}</span>
+            <div className="flex flex-col justify-center gap-5 p-6 sm:p-8 lg:p-10">
+              <Meta index={1} project={featured} />
+              <div>
+                <h3 className="text-3xl font-bold tracking-tight sm:text-4xl">{featured.title}</h3>
+                <p className="mt-2 text-sm font-medium text-violet-300">Frontend Lead</p>
               </div>
-
-              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-2 sm:mb-3 leading-tight">
-                {featured.title}
-              </h3>
-              <p className="text-gray-300 text-xs sm:text-sm leading-relaxed max-w-md line-clamp-3 sm:line-clamp-none">
-                {featured.description}
-              </p>
-
-              {/* Tech tags - hidden on very small screens */}
-              <div className="hidden sm:flex flex-wrap gap-1.5 mt-3">
-                {featured.tech.map(t => (
-                  <span key={t} className="text-[9px] text-purple-300/70 border border-purple-500/15 bg-purple-500/8 px-2 py-0.5 rounded-full">
-                    {t}
-                  </span>
-                ))}
-              </div>
-
-              <div className="mt-4 sm:mt-6">
-                {featured.live && (
-                  <a href={featured.live} target="_blank" rel="noopener noreferrer"
-                     className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 transition text-sm font-semibold min-h-[44px]">
-                    <FaArrowUpRightFromSquare size={12} /> Live Demo
-                  </a>
-                )}
+              <p className="text-[15px] leading-relaxed text-[var(--ink-muted)]">{featured.description}</p>
+              <TechList tech={featured.tech} />
+              <div className="pt-1">
+                <ProjectLinks project={featured} size="lg" />
               </div>
             </div>
-          </div>
+          </article>
         </ScrollReveal>
 
         {/* ── Grid ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+        <div className="mt-5 grid grid-cols-1 gap-5 sm:mt-6 md:grid-cols-2 md:gap-6">
           {rest.map((project, i) => (
             <ScrollReveal key={project.title} direction="up" delay={i * 80 + 120}>
-              <div className="group relative h-[300px] sm:h-[320px] rounded-2xl overflow-hidden border border-white/8 bg-black
-                             hover:border-purple-500/50 transition-all duration-500
-                             active:scale-[0.98] hover:-translate-y-1 sm:hover:-translate-y-2
-                             hover:shadow-[0_20px_50px_rgba(168,85,247,0.18)]"
-                   style={{ willChange: "transform" }}>
-                <Image src={project.image} alt={project.title} fill
-                  className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                  style={{ willChange: "transform" }} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
-                <div className="absolute inset-0 bg-purple-900/0 group-hover:bg-purple-900/8 transition-colors duration-500" />
-
-                {/* Tag */}
-                <div className="absolute top-3 left-3 z-10">
-                  <span className="text-[9px] sm:text-[10px] uppercase tracking-widest text-purple-200 bg-purple-600/30 border border-purple-500/30 backdrop-blur-sm px-2.5 py-1 rounded-full">
-                    {project.tag}
-                  </span>
+              <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/[0.02]
+                                  transition-all duration-500 hover:-translate-y-1 hover:border-violet-400/30
+                                  hover:shadow-[0_24px_60px_-24px_rgba(139,92,246,0.45)]">
+                <div className="relative aspect-[5/3] overflow-hidden bg-black">
+                  <Image
+                    src={project.image}
+                    alt={`${project.title} website shown on a laptop`}
+                    fill
+                    sizes="(min-width: 768px) 560px, 100vw"
+                    className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                  />
                 </div>
 
-                {/* Content */}
-                <div className="absolute bottom-0 z-10 p-4 sm:p-5 w-full">
-                  <div className="flex items-start justify-between mb-1">
-                    <h3 className="text-base sm:text-lg font-bold leading-tight pr-2">{project.title}</h3>
-                    <span className="text-[9px] text-gray-600 font-mono shrink-0 mt-0.5">{project.year}</span>
-                  </div>
-                  <p className="mt-1 text-[11px] sm:text-xs text-gray-400 leading-relaxed line-clamp-2">
-                    {project.description}
-                  </p>
-
-                  {/* Tech tags */}
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    {project.tech.slice(0, 3).map(t => (
-                      <span key={t} className="text-[8px] sm:text-[9px] text-purple-400/60 border border-purple-500/10 px-1.5 py-0.5 rounded-full">
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="mt-3 flex gap-2">
-                    {project.live && (
-                      <a href={project.live} target="_blank" rel="noopener noreferrer"
-                         className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 active:bg-purple-700 transition text-xs font-medium min-h-[36px]">
-                        <FaArrowUpRightFromSquare size={10} /> Demo
-                      </a>
-                    )}
-                    {project.github && (
-                      <a href={project.github} target="_blank" rel="noopener noreferrer"
-                         className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-white/15 bg-white/5 hover:bg-white/10 active:bg-white/15 transition text-xs font-medium min-h-[36px]">
-                        <FaGithub size={11} /> GitHub
-                      </a>
-                    )}
+                <div className="flex flex-1 flex-col gap-4 p-6 sm:p-7">
+                  <Meta index={i + 2} project={project} />
+                  <h3 className="text-2xl font-bold tracking-tight">{project.title}</h3>
+                  <p className="line-clamp-3 text-sm leading-relaxed text-[var(--ink-muted)]">{project.description}</p>
+                  <TechList tech={project.tech} />
+                  <div className="mt-auto pt-2">
+                    <ProjectLinks project={project} />
                   </div>
                 </div>
-              </div>
+              </article>
             </ScrollReveal>
           ))}
         </div>
