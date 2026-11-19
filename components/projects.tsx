@@ -10,7 +10,7 @@ const projects = [
     title: "Corpovinculo",
     description:
       "Frontend Lead on a multi-tenant event and sponsorship management SaaS. Built scalable UIs with Next.js & React, integrated REST APIs, and implemented Redux + TanStack Query state management.",
-    image: "/Corpovinculo.png",
+    image: "/projects/corpovinculo-closeup.webp",
     tag: "SaaS Platform",
     tech: ["Next.js", "React", "Redux", "TanStack Query", "REST API"],
     github: "",
@@ -22,7 +22,7 @@ const projects = [
     title: "Ceylon Curry Pot",
     description:
       "Full-stack food ordering system with user authentication, payment gateway, and an intuitive ordering interface.",
-    image: "/ccp.png",
+    image: "/projects/ccp-closeup.webp",
     tag: "Full-Stack",
     tech: ["Next.js", "Auth", "Payments", "UI/UX"],
     github: "https://github.com/Ceylon-Curry-Pot/Food-Delivery-Website",
@@ -34,7 +34,7 @@ const projects = [
     title: "Lidan DJ Portfolio",
     description:
       "Modern DJ portfolio website featuring event showcases, music tracks, and media gallery with a secure admin panel. The admin dashboard allows authenticated management of events, tracks, and gallery content with real-time updates. Built as a fully responsive, production-ready web application",
-    image: "/lidan-dj.png",
+    image: "/projects/lidan-dj-closeup.webp",
     tag: "Full-Stack",
     tech: ["Next.js","React", "Tailwind CSS", "Vercel", "REST API", "Authentication"],
     github: "https://github.com/ArteStruo/LidanDJ-Portfolio",
@@ -46,7 +46,7 @@ const projects = [
     title: "Inventory Tracker",
     description:
       "Restaurant inventory management with React frontend, Node.js/Express backend, RESTful APIs, and cloud deployment on Vercel & Render.",
-    image: "/CCP-inventory.png",
+    image: "/projects/ccp-inventory-closeup.webp",
     tag: "Full-Stack",
     tech: ["React.js", "Node.js", "Express.js", "Vercel"],
     github: "https://github.com/Sheran21/CCP_Inventory_Tracker",
@@ -58,7 +58,7 @@ const projects = [
     title: "Save Marine Life",
     description:
       "Awareness platform promoting marine conservation with interactive educational content.",
-    image: "/SM.png",
+    image: "/projects/save-marine-closeup.webp",
     tag: "Awareness",
     tech: ["HTML", "CSS", "JavaScript"],
     github: "https://github.com/Sheran21/Save-Marine-Life",
@@ -97,7 +97,7 @@ export default function Projects() {
             {/* Image */}
             <div className="relative h-[240px] sm:h-[340px] lg:h-[440px] w-full">
               <Image src={featured.image} alt={featured.title} fill priority
-                className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
                 style={{ willChange: "transform" }} />
               {/* gradient covers full card on mobile, half on desktop */}
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/20
@@ -155,7 +155,7 @@ export default function Projects() {
                              hover:shadow-[0_20px_50px_rgba(168,85,247,0.18)]"
                    style={{ willChange: "transform" }}>
                 <Image src={project.image} alt={project.title} fill
-                  className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                  className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
                   style={{ willChange: "transform" }} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
                 <div className="absolute inset-0 bg-purple-900/0 group-hover:bg-purple-900/8 transition-colors duration-500" />
