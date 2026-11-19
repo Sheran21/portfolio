@@ -6,7 +6,7 @@ import { ArrowUpRight, ArrowDown, MapPin, Download, Layers } from "lucide-react"
 import LightRays from "@/components/LightRays";
 import { IconCloud } from "@/components/ui/icon-cloud";
 
-// Tech the cloud orbits — languages, web, mobile, backend, data, cloud, testing & tooling
+// Tech the cloud orbits - languages, web, mobile, backend, data, cloud, testing & tooling
 const slugs = [
   "typescript", "javascript", "openjdk", "python", "dart",
   "react", "nextdotjs", "angular", "flutter", "android", "html5", "css", "tailwindcss", "redux",
@@ -61,7 +61,7 @@ export default function Hero() {
               <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-lime-300" />
               Now
             </span>
-            Software Engineer @ itZorix
+            Intern Software Engineer @ itZorix
           </div>
 
           <h1 className="hero-in mt-6 font-display text-[clamp(2.6rem,8vw,5.6rem)] font-extrabold leading-[0.92] tracking-[-0.045em]"
@@ -75,13 +75,13 @@ export default function Hero() {
           <p className="hero-in mt-4 font-accent text-[clamp(1.35rem,2.6vw,2rem)] leading-snug text-[var(--ink)]/90"
              style={{ animationDelay: "0.3s" }}>
             Software engineer building <span className="text-violet-300">reliable</span>,{" "}
-            <span className="text-fuchsia-300">scalable</span> software — from interface to infrastructure.
+            <span className="text-fuchsia-300">scalable</span> software - from interface to infrastructure.
           </p>
 
           <p className="hero-in mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-[var(--ink-muted)] lg:mx-0 sm:text-base"
              style={{ animationDelay: "0.4s" }}>
-            I design, build and ship software end to end — web and mobile apps, backend
-            services and APIs, data, cloud deployments and automated testing — with clean
+            I design, build and ship software end to end - web and mobile apps, backend
+            services and APIs, data, cloud deployments and automated testing - with clean
             architecture and great user experience at the core.
           </p>
 

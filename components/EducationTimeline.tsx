@@ -70,7 +70,7 @@ export default function EducationTimeline() {
 
         {/* Timeline */}
         <div className="relative">
-          {/* Vertical line — offset matches dot position */}
+          {/* Vertical line - offset matches dot position */}
           <div className="absolute left-[18px] sm:left-6 top-3 bottom-3 w-[1px]
                           bg-gradient-to-b from-purple-500/60 via-purple-500/20 to-transparent" />
 
@@ -119,7 +119,7 @@ export default function EducationTimeline() {
                         </p>
                       </div>
 
-                      {/* Logo — always visible but smaller on mobile */}
+                      {/* Logo - always visible but smaller on mobile */}
                       <div className="relative w-14 h-14 sm:w-20 sm:h-20 rounded-xl overflow-hidden border border-white/10 bg-white/5 shrink-0">
                         <Image src={item.image} alt={item.institute} fill className="object-cover" />
                       </div>

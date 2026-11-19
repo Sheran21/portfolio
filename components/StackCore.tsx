@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
 /**
- * Stack Core — a three.js scene for the Skills section.
+ * Stack Core - a three.js scene for the Skills section.
  * A noise-displaced plasma core with a fresnel rim, a slowly counter-rotating
  * geodesic shell, three tilted orbits carrying skill nodes, and a particle halo.
  * Labels are real DOM (crisp fonts, accessible) projected from 3D each frame.
@@ -37,7 +37,7 @@ const RINGS = [
   { radius: 1.55, tilt: new THREE.Euler(0.6, -0.7, 0.9), speed: 0.3 },
 ];
 
-// Ashima Arts simplex noise (MIT) — compact 3D version
+// Ashima Arts simplex noise (MIT) - compact 3D version
 const NOISE_GLSL = /* glsl */ `
 vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}
 vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}

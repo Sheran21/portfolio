@@ -104,10 +104,10 @@ export default function SkillsSection() {
           <div className="space-y-6 sm:space-y-8">
             <ScrollReveal direction="up" delay={100}>
               <p className="text-sm sm:text-base text-gray-400 leading-relaxed max-w-lg">
-                Software Engineer at itZorix and Software Engineering undergraduate at the
-                University of Westminster (via IIT). I build software end to end — web and
+                Intern Software Engineer @ itZorix and Software Engineering undergraduate at the
+                University of Westminster (via IIT). I build software end to end - web and
                 mobile applications, backend services and APIs, databases, cloud deployments
-                and automated testing — and deliver it as reliable, maintainable products.
+                and automated testing - and deliver it as reliable, maintainable products.
               </p>
             </ScrollReveal>
 
@@ -175,7 +175,7 @@ export default function SkillsSection() {
             </ScrollReveal>
           </div>
 
-          {/* ── Right column — Plasma Orb ── */}
+          {/* ── Right column - Plasma Orb ── */}
           <ScrollReveal direction="up" delay={180}>
             <div className="lg:sticky lg:top-28 space-y-4">
               <div className="relative">

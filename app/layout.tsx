@@ -36,16 +36,16 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Janul Samaranayake | Software Engineer",
+  title: "Janul Samaranayake | Intern Software Engineer",
   description:
-    "Janul Samaranayake | Software Engineer at itZorix building web, mobile and backend software, cloud services and scalable systems.",
+    "Janul Samaranayake | Intern Software Engineer @ itZorix building web, mobile and backend software, cloud services and scalable systems.",
   keywords: ["Janul Samaranayake", "Software Engineer", "Software Development", "Full Stack", "Mobile Apps", "Backend", "Cloud", "React", "Next.js", "Node.js", "Angular", "Flutter", "Java", "Spring Boot", "PostgreSQL", "Python", "Portfolio"],
   openGraph: {
     title: "Janul Samaranayake Portfolio",
     description:
       "Software Engineer portfolio: web, mobile and backend software, cloud services and scalable systems.",
-    url: "https://portfolio-janulsamaranayake.vercel.app",
-    siteName: "Janul Portfolio",
+    url: "https://www.janul-samaranayake.me",
+    siteName: "Janul Samaranayake Portfolio",
     images: [
       {
         url: "/preview.png",
@@ -88,7 +88,7 @@ export default function RootLayout({
                 "https://www.linkedin.com/in/janul-samaranayake/",
                 "https://github.com/janulsamaranayake",
               ],
-              jobTitle: "Software Engineer",
+              jobTitle: "Intern Software Engineer",
             }),
           }}
         />
@@ -97,7 +97,7 @@ export default function RootLayout({
         className={`${display.variable} ${serif.variable} ${body.variable} ${mono.variable} antialiased`}
       >
         {/* H1 for SEO */}
-        <h1 className="sr-only">Janul Samaranayake | Software Engineer</h1>
+        <h1 className="sr-only">Janul Samaranayake | Intern Software Engineer</h1>
         {children}
       </body>
     </html>

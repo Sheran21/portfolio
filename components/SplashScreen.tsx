@@ -1,460 +1,400 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
+import * as THREE from "three";
 
-// ── Glitch character pool ─────────────────────────────────────────────────────
-const GLITCH_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*<>[]{}|/\\^~";
-const TARGET_NAME  = "Janul Samaranayake";
+/**
+ * SplashScreen — "particle assembly".
+ *
+ * A vortex of GPU particles spirals inward and assembles into the name,
+ * holds while the role fades in, then bursts toward the camera as the overlay
+ * dissolves into the page. All particle motion runs in the vertex shader; the
+ * CPU only advances a few uniforms per frame.
+ *
+ * UX: skippable (button + Esc), honest progress counter, plays once per session,
+ * and reduced-motion users get a short static title card instead.
+ */
 
-function randomChar() {
-  return GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
-}
+const NAME = "JANUL";
+const SESSION_KEY = "splash-seen";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-interface Particle {
-  x: number; y: number;
-  vx: number; vy: number;
-  life: number; maxLife: number;
-  size: number; hue: number;
-}
+// Timeline (seconds)
+const T_ASSEMBLE_START = 0.15;
+const T_ASSEMBLE_END = 2.1;
+const T_HOLD_END = 3.4;
+const T_EXIT = 0.9; // burst + fade duration
 
-export default function SplashScreen({ onDone }: { onDone: () => void }) {
-  // Refs
-  const orbCanvasRef       = useRef<HTMLCanvasElement>(null);
-  const particleCanvasRef  = useRef<HTMLCanvasElement>(null);
-  const orbRafRef          = useRef<number>(0);
-  const particleRafRef     = useRef<number>(0);
-  const particlesRef       = useRef<Particle[]>([]);
-  const burstFiredRef      = useRef(false);
+const vertexShader = /* glsl */ `
+attribute vec3 aStart;
+attribute vec3 aTarget;
+attribute float aSeed;
 
-  // State
-  const [scanY, setScanY]             = useState(-4);           // scan line Y position
-  const [scanDone, setScanDone]       = useState(false);
-  const [showContent, setShowContent] = useState(false);        // content after scan
-  const [glitchName, setGlitchName]   = useState("                  "); // 18 chars placeholder
-  const [progress, setProgress]       = useState(0);            // 0–100
-  const [exiting, setExiting]         = useState(false);
+uniform float uTime;
+uniform float uAssemble;   // 0 → 1
+uniform float uExplode;    // 0 → 1
+uniform float uPixelRatio;
 
-  // ── Plasma orb ───────────────────────────────────────────────────────────────
-  useEffect(() => {
-    const canvas = orbCanvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-    const W = 90, H = 90, CX = 45, CY = 45, R = 34;
-    canvas.width = W; canvas.height = H;
+varying float vSeed;
+varying float vSettle;
 
-    const plasma = Array.from({ length: 30 }, () => ({
-      phi:   Math.random() * Math.PI,
-      theta: Math.random() * Math.PI * 2,
-      speed: (Math.random() - 0.5) * 0.012,
-    }));
-    let t = 0;
+float easeOutCubic(float t) { return 1.0 - pow(1.0 - t, 3.0); }
 
-    function frame() {
-      t += 0.01;
-      ctx.clearRect(0, 0, W, H);
-      const g = ctx.createRadialGradient(CX - 10, CY - 10, 3, CX, CY, R);
-      g.addColorStop(0,    "rgba(220,180,255,0.97)");
-      g.addColorStop(0.22, "rgba(168,85,247,0.93)");
-      g.addColorStop(0.6,  "rgba(100,20,190,0.88)");
-      g.addColorStop(1,    "rgba(20,5,60,0.95)");
-      ctx.beginPath(); ctx.arc(CX, CY, R, 0, Math.PI * 2);
-      ctx.fillStyle = g; ctx.fill();
+void main() {
+  vSeed = aSeed;
 
-      plasma.forEach(p => {
-        p.theta += p.speed;
-        const x = Math.sin(p.phi) * Math.cos(p.theta);
-        const y = Math.sin(p.phi) * Math.sin(p.theta);
-        const z = Math.cos(p.phi);
-        if (z < 0) return;
-        const n = (Math.sin(x * 3 + t) * Math.cos(y * 2.7 - t * 0.7) * 0.5 +
-                   Math.sin(x * 1.9 - t * 1.3) * 0.3 + 1) * 0.5;
-        ctx.beginPath();
-        ctx.arc(CX + x * R * 0.9, CY + y * R * 0.9, n * 2.8 + 0.4, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${260 + n * 80},100%,75%,${n * z * 0.72})`;
-        ctx.fill();
-      });
+  // staggered arrival: each particle starts at a slightly different moment
+  float local = clamp((uAssemble - aSeed * 0.45) / 0.55, 0.0, 1.0);
+  float e = easeOutCubic(local);
+  vSettle = e;
 
-      const s = ctx.createRadialGradient(CX - 11, CY - 12, 0, CX - 9, CY - 10, 15);
-      s.addColorStop(0, "rgba(255,255,255,0.58)");
-      s.addColorStop(1, "transparent");
-      ctx.beginPath(); ctx.arc(CX, CY, R, 0, Math.PI * 2); ctx.fillStyle = s; ctx.fill();
+  // the start cloud swirls around the Z axis until the particle departs
+  float swirl = uTime * (0.35 + aSeed * 0.5) * (1.0 - e);
+  float c = cos(swirl), s = sin(swirl);
+  vec3 start = vec3(aStart.x * c - aStart.y * s, aStart.x * s + aStart.y * c, aStart.z);
 
-      const pulse = 0.75 + 0.25 * Math.sin(t * 1.8);
-      const gl = ctx.createRadialGradient(CX, CY, R * 0.5, CX, CY, R * 2);
-      gl.addColorStop(0, `rgba(168,85,247,${0.35 * pulse})`);
-      gl.addColorStop(1, "transparent");
-      ctx.beginPath(); ctx.arc(CX, CY, R * 2, 0, Math.PI * 2); ctx.fillStyle = gl; ctx.fill();
+  // curved flight path: lift along a sideways arc mid-transit
+  vec3 p = mix(start, aTarget, e);
+  float arc = sin(e * 3.14159) * (1.0 - e);
+  p += vec3(-aTarget.y, aTarget.x, 0.0) * arc * 0.35;
 
-      orbRafRef.current = requestAnimationFrame(frame);
+  // idle shimmer once settled
+  p += vec3(
+    sin(uTime * 2.0 + aSeed * 40.0),
+    cos(uTime * 1.7 + aSeed * 30.0),
+    sin(uTime * 1.3 + aSeed * 20.0)
+  ) * 0.012 * e;
+
+  // exit burst: outward from the centre and toward the camera
+  vec3 dir = normalize(aTarget + vec3(0.0001, 0.0001, 0.0) + vec3(0.0, 0.0, 0.6 + aSeed));
+  p += dir * uExplode * uExplode * (6.0 + aSeed * 10.0);
+
+  vec4 mv = modelViewMatrix * vec4(p, 1.0);
+  gl_Position = projectionMatrix * mv;
+  gl_PointSize = (2.4 + aSeed * 2.6 + uExplode * 3.0) * uPixelRatio * (10.0 / -mv.z);
+}`;
+
+const fragmentShader = /* glsl */ `
+uniform float uFade;
+varying float vSeed;
+varying float vSettle;
+
+void main() {
+  float r = length(gl_PointCoord - 0.5);
+  float a = smoothstep(0.5, 0.0, r);
+
+  vec3 violet  = vec3(0.55, 0.36, 0.96);
+  vec3 fuchsia = vec3(0.91, 0.47, 0.98);
+  vec3 lime    = vec3(0.85, 0.98, 0.62);
+  vec3 col = mix(violet, fuchsia, smoothstep(0.2, 0.9, vSeed));
+  col = mix(col, lime, step(0.93, vSeed) * 0.85);
+  // settled particles brighten slightly so the name reads crisply
+  col *= 0.75 + vSettle * 0.45;
+
+  gl_FragColor = vec4(col, a * uFade * (0.75 + vSettle * 0.25));
+}`;
+
+/** Sample filled pixels of the name, rendered in the site's display font. */
+function sampleName(count: number, worldWidth: number): Float32Array {
+  const W = 1200, H = 360;
+  const cv = document.createElement("canvas");
+  cv.width = W;
+  cv.height = H;
+  const g = cv.getContext("2d", { willReadFrequently: true })!;
+  const family = getComputedStyle(document.body).getPropertyValue("--font-display").trim() || "sans-serif";
+  g.fillStyle = "#fff";
+  g.textAlign = "center";
+  g.textBaseline = "middle";
+  g.font = `800 300px ${family}`;
+  // keep letter spacing tight like the hero headline
+  try { (g as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = "-12px"; } catch {}
+  g.fillText(NAME, W / 2, H / 2 + 10);
+
+  const data = g.getImageData(0, 0, W, H).data;
+  const pts: number[] = [];
+  let minX = W, maxX = 0;
+  for (let y = 0; y < H; y += 2) {
+    for (let x = 0; x < W; x += 2) {
+      if (data[(y * W + x) * 4 + 3] > 140) {
+        pts.push(x, y);
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+      }
     }
-    orbRafRef.current = requestAnimationFrame(frame);
-    return () => cancelAnimationFrame(orbRafRef.current);
-  }, []);
+  }
+  const out = new Float32Array(count * 3);
+  if (pts.length === 0) return out;
+  const textW = Math.max(1, maxX - minX);
+  const scale = worldWidth / textW;
+  const cx = (minX + maxX) / 2;
+  for (let i = 0; i < count; i++) {
+    const j = Math.floor(Math.random() * (pts.length / 2)) * 2;
+    out[i * 3] = (pts[j] - cx + (Math.random() - 0.5) * 2) * scale;
+    out[i * 3 + 1] = -(pts[j + 1] - H / 2 - 10 + (Math.random() - 0.5) * 2) * scale;
+    out[i * 3 + 2] = (Math.random() - 0.5) * 0.15;
+  }
+  return out;
+}
 
-  // ── Particle burst (fires once when showContent becomes true) ─────────────
+export default function SplashScreen({
+  onDone,
+  onReveal,
+}: {
+  /** Called when the splash has fully finished and can unmount. */
+  onDone: () => void;
+  /** Called when the exit begins, so the page can fade in underneath. */
+  onReveal?: () => void;
+}) {
+  const revealRef = useRef(onReveal);
+  useEffect(() => { revealRef.current = onReveal; }, [onReveal]);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const counterRef = useRef<HTMLSpanElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+  const skipRef = useRef<() => void>(() => {});
+  const [phase, setPhase] = useState<"intro" | "named" | "exit">("intro");
+
   useEffect(() => {
-    const canvas = particleCanvasRef.current;
-    if (!canvas || !showContent || burstFiredRef.current) return;
-    burstFiredRef.current = true;
+    const stage = stageRef.current;
+    if (!stage) return;
 
-    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-    canvas.width  = canvas.offsetWidth  || window.innerWidth;
-    canvas.height = canvas.offsetHeight || window.innerHeight;
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      try { sessionStorage.setItem(SESSION_KEY, "1"); } catch {}
+      onDone();
+    };
 
-    const CX = canvas.width  / 2;
-    const CY = canvas.height / 2 - 60; // offset to match orb position
+    // Returning visitor in this session → skip straight to the site
+    let seen = false;
+    try { seen = sessionStorage.getItem(SESSION_KEY) === "1"; } catch {}
+    if (seen) {
+      const t = setTimeout(finish, 0);
+      return () => clearTimeout(t);
+    }
 
-    // Spawn 36 particles in a burst
-    particlesRef.current = Array.from({ length: 36 }, (_, i) => {
-      const angle = (i / 36) * Math.PI * 2 + Math.random() * 0.3;
-      const speed = 1.8 + Math.random() * 3.5;
-      return {
-        x: CX, y: CY,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        life: 1, maxLife: 1,
-        size: Math.random() * 3.5 + 1,
-        hue: 260 + Math.random() * 80,
-      };
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) {
+      // static title card, brief and calm
+      const t1 = setTimeout(() => setPhase("named"), 50);
+      const t2 = setTimeout(() => { setPhase("exit"); revealRef.current?.(); }, 900);
+      const t3 = setTimeout(finish, 1300);
+      if (counterRef.current) counterRef.current.textContent = "100";
+      skipRef.current = finish;
+      return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    }
+
+    // ── three.js setup ──
+    const isSmall = window.innerWidth < 640;
+    const COUNT = isSmall ? 4200 : 7500;
+    const pixelRatio = Math.min(window.devicePixelRatio, 1.75);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: "high-performance" });
+    renderer.setPixelRatio(pixelRatio);
+    renderer.setClearColor(0x000000, 0);
+    renderer.domElement.style.display = "block";
+    stage.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 10);
+
+    const visibleWidth = () => 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z * camera.aspect;
+
+    const geometry = new THREE.BufferGeometry();
+    const starts = new Float32Array(COUNT * 3);
+    const seeds = new Float32Array(COUNT);
+    for (let i = 0; i < COUNT; i++) {
+      // spiral-galaxy start cloud
+      const arm = i % 3;
+      const r = 3 + Math.pow(Math.random(), 0.7) * 9;
+      const theta = arm * ((Math.PI * 2) / 3) + r * 0.45 + (Math.random() - 0.5) * 0.9;
+      starts[i * 3] = Math.cos(theta) * r;
+      starts[i * 3 + 1] = Math.sin(theta) * r * 0.62;
+      starts[i * 3 + 2] = (Math.random() - 0.5) * 6 - 2;
+      seeds[i] = Math.random();
+    }
+    geometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(COUNT * 3), 3)); // unused by shader; keeps three happy
+    geometry.setAttribute("aStart", new THREE.BufferAttribute(starts, 3));
+    geometry.setAttribute("aSeed", new THREE.BufferAttribute(seeds, 1));
+    const targetAttr = new THREE.BufferAttribute(new Float32Array(COUNT * 3), 3);
+    geometry.setAttribute("aTarget", targetAttr);
+
+    const uniforms = {
+      uTime: { value: 0 },
+      uAssemble: { value: 0 },
+      uExplode: { value: 0 },
+      uFade: { value: 0 },
+      uPixelRatio: { value: pixelRatio },
+    };
+    const material = new THREE.ShaderMaterial({
+      uniforms, vertexShader, fragmentShader,
+      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    });
+    const points = new THREE.Points(geometry, material);
+    points.frustumCulled = false; // positions come from the shader
+    scene.add(points);
+
+    const layoutTargets = () => {
+      const width = Math.min(visibleWidth() * (isSmall ? 0.84 : 0.62), 9.5);
+      targetAttr.array.set(sampleName(COUNT, width));
+      targetAttr.needsUpdate = true;
+    };
+
+    const resize = () => {
+      renderer.setSize(window.innerWidth, window.innerHeight, false);
+      renderer.domElement.style.width = "100%";
+      renderer.domElement.style.height = "100%";
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    // ── Timeline ──
+    const timer = new THREE.Timer();
+    timer.connect(document);
+    let t = 0;
+    let t0 = -1;              // timer time at the first rendered frame
+    let exitAt = -1;          // time the exit started
+    let pageLoaded = document.readyState === "complete";
+    const onLoad = () => { pageLoaded = true; };
+    window.addEventListener("load", onLoad);
+    let shownName = false;
+
+    // Safety nets: never depend solely on animation frames (background tabs,
+    // throttled or slow GPUs can stall them) — always finish on a timer too.
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const startExit = () => {
+      if (exitAt >= 0) return;
+      exitAt = t;
+      setPhase("exit");
+      revealRef.current?.();
+      timers.push(setTimeout(finish, T_EXIT * 1000 + 400));
+    };
+    timers.push(setTimeout(startExit, 8000)); // hard cap on total splash time
+    skipRef.current = startExit;
+
+    const frame = () => {
+      timer.update();
+      // real elapsed time, so throttled/slow frames don't stretch the timeline
+      if (t0 < 0) t0 = timer.getElapsed();
+      t = timer.getElapsed() - t0;
+      uniforms.uTime.value = t;
+      uniforms.uFade.value = Math.min(1, t / 0.35);
+
+      const a = THREE.MathUtils.clamp((t - T_ASSEMBLE_START) / (T_ASSEMBLE_END - T_ASSEMBLE_START), 0, 1);
+      uniforms.uAssemble.value = a;
+
+      // honest progress: timeline plus actual page load
+      const pct = Math.round(Math.min(a, pageLoaded ? 1 : 0.92) * 100);
+      if (counterRef.current) counterRef.current.textContent = String(pct).padStart(3, "0");
+      if (barRef.current) barRef.current.style.transform = `scaleX(${pct / 100})`;
+
+      if (!shownName && a > 0.82) { shownName = true; setPhase("named"); }
+
+      // gentle camera drift for depth
+      camera.position.x = Math.sin(t * 0.4) * 0.25;
+      camera.position.y = Math.cos(t * 0.33) * 0.15;
+      camera.lookAt(0, 0, 0);
+
+      // hold until the page has loaded (cap at 6s so it never traps the user)
+      if (exitAt < 0 && t > T_HOLD_END && (pageLoaded || t > 6)) startExit();
+
+      if (exitAt >= 0) {
+        const x = Math.min(1, (t - exitAt) / T_EXIT);
+        uniforms.uExplode.value = x;
+        uniforms.uFade.value = 1 - x * x;
+        if (x >= 1) {
+          renderer.setAnimationLoop(null);
+          finish();
+          return;
+        }
+      }
+      renderer.render(scene, camera);
+    };
+
+    // Sample the name once the display font is ready (bounded wait)
+    let cancelled = false;
+    Promise.race([document.fonts?.ready ?? Promise.resolve(), new Promise((r) => setTimeout(r, 800))]).then(() => {
+      if (cancelled) return;
+      layoutTargets();
+      renderer.setAnimationLoop(frame);
     });
 
-    function loop() {
-      ctx.clearRect(0, 0, canvas!.width, canvas!.height);
-      let alive = false;
-      particlesRef.current.forEach(p => {
-        p.life -= 0.018;
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vx *= 0.97;
-        p.vy *= 0.97;
-        if (p.life > 0) {
-          alive = true;
-          const a = p.life;
-          // glow halo
-          const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 4);
-          grd.addColorStop(0, `hsla(${p.hue},100%,70%,${a * 0.6})`);
-          grd.addColorStop(1, "transparent");
-          ctx.beginPath(); ctx.arc(p.x, p.y, p.size * 4, 0, Math.PI * 2);
-          ctx.fillStyle = grd; ctx.fill();
-          // core dot
-          ctx.beginPath(); ctx.arc(p.x, p.y, p.size * a, 0, Math.PI * 2);
-          ctx.fillStyle = `hsla(${p.hue},100%,78%,${a})`;
-          ctx.fill();
-        }
-      });
-      if (alive) particleRafRef.current = requestAnimationFrame(loop);
-      else ctx.clearRect(0, 0, canvas!.width, canvas!.height);
-    }
-    particleRafRef.current = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(particleRafRef.current);
-  }, [showContent]);
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") startExit(); };
+    window.addEventListener("keydown", onKey);
 
-  // ── Scan line animation ───────────────────────────────────────────────────
-  useEffect(() => {
-    // Sweep from -4px to 100vh over ~900ms
-    const startTime  = performance.now();
-    const duration   = 900;
-    let rafId: number;
-
-    function sweep(now: number) {
-      const elapsed = now - startTime;
-      const pct     = Math.min(elapsed / duration, 1);
-      // ease-in-out quad
-      const eased   = pct < 0.5 ? 2 * pct * pct : 1 - Math.pow(-2 * pct + 2, 2) / 2;
-      setScanY(eased * 110); // go slightly past 100vh so it exits cleanly
-
-      if (pct < 1) {
-        rafId = requestAnimationFrame(sweep);
-      } else {
-        setScanDone(true);
-        setShowContent(true);
-      }
-    }
-    // Small delay before scan starts so the screen is fully black first
-    const t = setTimeout(() => { rafId = requestAnimationFrame(sweep); }, 200);
-    return () => { clearTimeout(t); cancelAnimationFrame(rafId); };
-  }, []);
-
-  // ── Glitch → resolve name ─────────────────────────────────────────────────
-  useEffect(() => {
-    if (!showContent) return;
-
-    const TOTAL_DURATION = 1400; // ms total glitch time
-    const SETTLE_START   = 600;  // when letters start locking in
-    const startTime      = performance.now();
-    const lockedChars    = new Array(TARGET_NAME.length).fill(false);
-    let rafId: number;
-
-    function tick(now: number) {
-      const elapsed = now - startTime;
-      const t       = Math.min(elapsed / TOTAL_DURATION, 1);
-
-      // How many chars should be locked in by now
-      const lockCount = Math.floor(
-        ((elapsed - SETTLE_START) / (TOTAL_DURATION - SETTLE_START)) * TARGET_NAME.length
-      );
-
-      let display = "";
-      for (let i = 0; i < TARGET_NAME.length; i++) {
-        if (i < lockCount && elapsed > SETTLE_START) {
-          lockedChars[i] = true;
-        }
-        if (lockedChars[i]) {
-          display += TARGET_NAME[i];
-        } else if (TARGET_NAME[i] === " ") {
-          display += " ";
-        } else {
-          // Glitch faster early, slower near end
-          display += Math.random() < 0.5 + t * 0.4 ? TARGET_NAME[i] : randomChar();
-        }
-      }
-      setGlitchName(display);
-
-      if (t < 1) rafId = requestAnimationFrame(tick);
-      else setGlitchName(TARGET_NAME);
-    }
-    rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
-  }, [showContent]);
-
-  // ── Progress counter ──────────────────────────────────────────────────────
-  useEffect(() => {
-    if (!showContent) return;
-
-    const DURATION  = 1800; // ms to go 0→100
-    const startTime = performance.now();
-    let rafId: number;
-
-    function tick(now: number) {
-      const pct = Math.min((now - startTime) / DURATION, 1);
-      // ease-out cubic so it slows near 100
-      const eased = 1 - Math.pow(1 - pct, 3);
-      setProgress(Math.round(eased * 100));
-      if (pct < 1) rafId = requestAnimationFrame(tick);
-    }
-    rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
-  }, [showContent]);
-
-  // ── Exit timing ───────────────────────────────────────────────────────────
-  useEffect(() => {
-    const exitTimer = setTimeout(() => setExiting(true),  3000);
-    const doneTimer = setTimeout(() => onDone(),          3000 + 900);
-    return () => { clearTimeout(exitTimer); clearTimeout(doneTimer); };
+    return () => {
+      cancelled = true;
+      timers.forEach(clearTimeout);
+      renderer.setAnimationLoop(null);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("load", onLoad);
+      window.removeEventListener("keydown", onKey);
+      timer.dispose();
+      geometry.dispose();
+      material.dispose();
+      renderer.dispose();
+      renderer.forceContextLoss();
+      renderer.domElement.remove();
+    };
   }, [onDone]);
 
-  // ── Render ────────────────────────────────────────────────────────────────
+  const named = phase !== "intro";
+  const exiting = phase === "exit";
+
   return (
-    <>
-      <style>{`
-        @keyframes sp-ring-pulse {
-          0%,100% { transform:scale(1);    opacity:1;    }
-          50%      { transform:scale(1.07); opacity:0.45; }
-        }
-        @keyframes sp-glow-pulse {
-          0%,100% { transform:scale(1);    opacity:0.8; }
-          50%      { transform:scale(1.12); opacity:1;   }
-        }
-        @keyframes sp-fade-up {
-          from { opacity:0; transform:translateY(12px); }
-          to   { opacity:1; transform:translateY(0);    }
-        }
-        .sp-ring { animation: sp-ring-pulse 3s ease-in-out infinite; will-change:transform; }
-        .sp-glow { animation: sp-glow-pulse 3s ease-in-out infinite; will-change:transform; }
-        .sp-show { animation: sp-fade-up 0.6s cubic-bezier(.22,.68,0,1.05) both; }
-        .sp-show-1 { animation: sp-fade-up 0.6s cubic-bezier(.22,.68,0,1.05) 0.05s both; }
-        .sp-show-2 { animation: sp-fade-up 0.6s cubic-bezier(.22,.68,0,1.05) 0.18s both; }
-        .sp-show-3 { animation: sp-fade-up 0.6s cubic-bezier(.22,.68,0,1.05) 0.32s both; }
-        .sp-show-4 { animation: sp-fade-up 0.6s cubic-bezier(.22,.68,0,1.05) 0.44s both; }
+    <div
+      role="status"
+      aria-live="polite"
+      aria-label="Loading portfolio"
+      className={`fixed inset-0 z-[9999] overflow-hidden bg-[var(--bg)] transition-opacity duration-700 ${exiting ? "opacity-0" : "opacity-100"}`}
+      style={{ transitionDelay: exiting ? "0.15s" : "0s" }}
+    >
+      {/* soft violet core glow behind the particles */}
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[60vmin] w-[60vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-700/25 blur-[90px]" />
+      <div className="pointer-events-none absolute inset-0 dot-grid [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)] opacity-60" />
 
-        /* Scan line chromatic aberration glow */
-        .scan-line {
-          position: absolute;
-          left: 0; right: 0;
-          height: 3px;
-          pointer-events: none;
-          z-index: 20;
-          background: linear-gradient(90deg,
-            transparent 0%,
-            rgba(139,92,246,0.4) 15%,
-            rgba(168,85,247,0.9) 40%,
-            rgba(232,121,249,1)  50%,
-            rgba(168,85,247,0.9) 60%,
-            rgba(56,189,248,0.4) 85%,
-            transparent 100%
-          );
-          box-shadow:
-            0 0 12px 2px rgba(168,85,247,0.7),
-            0 0 40px 6px rgba(168,85,247,0.25),
-            0 -1px 0 rgba(56,189,248,0.5),
-            0  1px 0 rgba(232,121,249,0.5);
-          will-change: top;
-        }
-        /* Scan trail — dim overlay that "reveals" content above the line */
-        .scan-trail {
-          position: absolute;
-          left:0; right:0; top:0;
-          pointer-events: none;
-          z-index: 19;
-          background: linear-gradient(to bottom,
-            rgba(5,5,7,0) 0%,
-            rgba(5,5,7,0) 100%
-          );
-        }
-        /* Content masked — hidden until scan passes over it */
-        .scan-mask {
-          transition: opacity 0.3s ease;
-        }
+      {/* three.js stage */}
+      <div ref={stageRef} className="absolute inset-0" />
 
-        /* Glitch name — subtle RGB split on active glitch */
-        .glitch-active {
-          text-shadow:
-            1px 0 0 rgba(56,189,248,0.5),
-           -1px 0 0 rgba(232,121,249,0.5);
-        }
-
-        /* Progress counter monospace */
-        .progress-num {
-          font-variant-numeric: tabular-nums;
-          font-feature-settings: "tnum";
-        }
-      `}</style>
-
-      {/* Full-screen overlay */}
-      <div
-        className="fixed inset-0 z-[9999] overflow-hidden bg-[var(--bg)]"
-        style={{
-          transition: "opacity 0.85s cubic-bezier(.4,0,.2,1), transform 0.85s cubic-bezier(.4,0,.2,1)",
-          opacity:    exiting ? 0 : 1,
-          transform:  exiting ? "scale(1.04)" : "scale(1)",
-          pointerEvents: exiting ? "none" : "auto",
-        }}
-      >
-        {/* Dot grid */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: "radial-gradient(rgba(255,255,255,0.045) 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-          }}
-        />
-
-        {/* ── SCAN LINE ── */}
-        {!scanDone && (
-          <>
-            {/* Dark overlay ABOVE the scan line (unrevealed area) */}
-            <div
-              className="absolute left-0 right-0 top-0 z-[18] pointer-events-none bg-[var(--bg)]"
-              style={{ height: `${scanY}vh` }}
-            />
-            {/* The glowing scan line itself */}
-            <div
-              className="scan-line"
-              style={{ top: `${scanY}vh` }}
-            />
-          </>
-        )}
-
-        {/* Particle canvas — fullscreen, behind content */}
-        <canvas
-          ref={particleCanvasRef}
-          className="absolute inset-0 w-full h-full pointer-events-none z-[5]"
-        />
-
-        {/* Corner accents */}
-        {[
-          "top-6 left-6 sm:top-8 sm:left-8 border-t border-l",
-          "top-6 right-6 sm:top-8 sm:right-8 border-t border-r",
-          "bottom-6 left-6 sm:bottom-8 sm:left-8 border-b border-l",
-          "bottom-6 right-6 sm:bottom-8 sm:right-8 border-b border-r",
-        ].map((cls, i) => (
-          <div key={i} className={`absolute w-7 h-7 sm:w-10 sm:h-10 ${cls} border-purple-500/40 z-10`} />
-        ))}
-
-        {/* Main content — fades in after scan */}
-        <div
-          className="relative z-10 flex flex-col items-center justify-center h-full px-6"
-          style={{
-            opacity: showContent ? 1 : 0,
-            transition: "opacity 0.2s ease",
-          }}
+      {/* Role line under the assembled name */}
+      <div className="pointer-events-none absolute inset-x-0 top-1/2 flex translate-y-[min(16vw,7.5rem)] justify-center px-6">
+        <p
+          className={`text-center font-accent text-[clamp(1.1rem,2.6vw,1.6rem)] text-[var(--ink)]/85 transition-all duration-700
+                      ${named && !exiting ? "translate-y-0 opacity-100 blur-0" : "translate-y-3 opacity-0 blur-sm"}`}
         >
-          {/* ── Orb cluster ── */}
-          <div className="sp-show-1 relative flex items-center justify-center mb-8 sm:mb-10">
-            <div
-              className="sp-glow absolute w-[240px] h-[240px] rounded-full pointer-events-none"
-              style={{ background: "radial-gradient(circle, rgba(120,40,220,0.18) 0%, transparent 70%)" }}
-            />
-            <div className="sp-ring absolute w-[110px] h-[110px] rounded-full border border-purple-500/22" style={{ animationDelay: "0s" }} />
-            <div className="sp-ring absolute w-[155px] h-[155px] rounded-full border border-purple-500/14" style={{ animationDelay: "0.5s" }} />
-            <div className="sp-ring absolute w-[200px] h-[200px] rounded-full border border-purple-500/08" style={{ animationDelay: "1s" }} />
-            <canvas ref={orbCanvasRef} className="relative z-10" />
-          </div>
+          Intern Software Engineer <span className="text-violet-300">·</span> itZorix
+        </p>
+      </div>
 
-          {/* ── Text block ── */}
-          <div className="text-center relative z-10">
-            {/* Tag */}
-            <p className="sp-show-2 text-[10px] sm:text-xs uppercase tracking-[0.35em] text-purple-400 mb-3">
-              Portfolio
-            </p>
-
-            {/* Glitch name */}
-            <h1
-              className={`sp-show-2 text-[clamp(1.6rem,5.5vw,2.8rem)] font-extrabold leading-none tracking-tight ${showContent && glitchName !== TARGET_NAME ? "glitch-active" : ""}`}
-              style={{
-                background: "linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 35%, #c084fc 65%, #a855f7 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-                fontFamily: "var(--font-display), sans-serif",
-                minWidth: "280px",
-                display: "inline-block",
-              }}
-            >
-              {glitchName}
-            </h1>
-
-            {/* Role */}
-            <p className="sp-show-3 mt-3 text-xs sm:text-sm text-white/30 tracking-widest">
-              Software Engineer · itZorix
-            </p>
-          </div>
-
-          {/* ── Loading bar + progress counter ── */}
-          <div className="sp-show-4 mt-10 sm:mt-12 flex flex-col items-center gap-3">
-            {/* Bar */}
-            <div className="w-36 sm:w-48 h-[2px] rounded-full overflow-hidden bg-white/6">
-              <div
-                className="h-full rounded-full transition-none"
-                style={{
-                  width: `${progress}%`,
-                  background: "linear-gradient(90deg, #7c3aed, #c084fc, #a855f7)",
-                  transition: "width 0.05s linear",
-                }}
-              />
-            </div>
-
-            {/* Counter row */}
-            <div className="flex items-center gap-3">
-              <span
-                className="progress-num text-xs font-mono text-purple-400/80"
-                style={{ minWidth: "2.8rem", textAlign: "right" }}
-              >
-                {String(progress).padStart(3, "0")}%
-              </span>
-              <span className="text-white/15 text-xs">|</span>
-              <span className="text-[10px] font-mono text-white/25 uppercase tracking-widest">
-                {progress < 30  ? "initialising..." :
-                 progress < 60  ? "loading assets..." :
-                 progress < 90  ? "building ui..." :
-                 progress < 100 ? "almost ready..." :
-                                  "ready."}
-              </span>
-            </div>
-          </div>
+      {/* Bottom bar: label, counter, progress line */}
+      <div className="absolute inset-x-0 bottom-0 px-5 pb-6 sm:px-10 sm:pb-9">
+        <div className="flex items-end justify-between font-mono text-[10px] uppercase tracking-[0.25em] text-[var(--ink-dim)]">
+          <span>Portfolio · {new Date().getFullYear()}</span>
+          <span className="text-[var(--ink-muted)]">
+            <span ref={counterRef} className="tabular-nums text-violet-200">000</span>
+            <span className="opacity-50"> / 100</span>
+          </span>
+        </div>
+        <div className="mt-3 h-px w-full overflow-hidden bg-white/10">
+          <div
+            ref={barRef}
+            className="h-full origin-left bg-gradient-to-r from-violet-500 via-fuchsia-400 to-lime-200"
+            style={{ transform: "scaleX(0)" }}
+          />
         </div>
       </div>
-    </>
+
+      {/* Skip */}
+      <button
+        type="button"
+        onClick={() => skipRef.current()}
+        className="absolute right-4 top-4 min-h-[44px] rounded-full border border-white/10 bg-white/[0.04] px-4 font-mono text-[11px]
+                   uppercase tracking-[0.2em] text-[var(--ink-muted)] backdrop-blur transition hover:border-violet-300/40 hover:text-white sm:right-8 sm:top-7"
+      >
+        Skip <span className="opacity-50">· esc</span>
+      </button>
+    </div>
   );
 }
