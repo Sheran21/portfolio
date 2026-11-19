@@ -26,7 +26,7 @@ const articles = [
 
 export default function Articles() {
   return (
-    <section id="articles" className="overflow-x-hidden px-4 sm:px-6 py-20 sm:py-28 bg-[#050507] text-white">
+    <section id="articles" className="overflow-x-hidden px-4 sm:px-6 py-20 sm:py-28 bg-[var(--bg)] text-white">
       <div className="mx-auto max-w-6xl">
 
         <ScrollReveal direction="up">
@@ -34,7 +34,7 @@ export default function Articles() {
             <span className="sec-num">03</span>
             <div>
               <p className="text-xs uppercase tracking-[0.3em] text-purple-400 mb-1">Writing</p>
-              <h2 className="text-3xl sm:text-4xl font-extrabold">Articles</h2>
+              <h2 className="text-4xl sm:text-5xl">Articles &amp; <span className="font-accent text-violet-300">writing</span></h2>
               <div className="mt-2 h-[2px] w-20 sm:w-24 bg-gradient-to-r from-purple-500 to-transparent rounded-full" />
             </div>
           </div>

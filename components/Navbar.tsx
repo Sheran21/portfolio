@@ -54,7 +54,7 @@ export default function Navbar() {
       {/* Scroll progress bar — always full width at top */}
       <div className="fixed top-0 left-0 right-0 z-[60] h-[2px]">
         <div
-          className="h-full bg-gradient-to-r from-purple-500 via-fuchsia-400 to-purple-300"
+          className="h-full bg-gradient-to-r from-violet-500 via-fuchsia-400 to-lime-200"
           style={{ width: `${scrollPct}%`, transition: "width 0.1s linear" }}
         />
       </div>
@@ -89,14 +89,11 @@ export default function Navbar() {
               const isActive = active === id;
               return (
                 <a key={id} href={`#${id}`}
-                   className={`relative px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300 ${
+                   className={`relative px-3.5 py-1.5 text-[13px] font-medium rounded-full transition-all duration-300 ${
                      isActive ? "text-white" : "text-gray-400 hover:text-gray-200"
                    }`}>
                   {isActive && (
-                    <>
-                      <span className="absolute inset-0 rounded-full bg-purple-600/25 blur-sm" />
-                      <span className="absolute inset-0 rounded-full bg-purple-600/10 border border-purple-500/30" />
-                    </>
+                    <span className="absolute inset-0 rounded-full bg-white/[0.08] border border-white/15 shadow-[0_0_20px_-4px_rgba(139,92,246,0.6)]" />
                   )}
                   <span className="relative z-10">{label}</span>
                 </a>
@@ -107,7 +104,7 @@ export default function Navbar() {
           {/* Desktop CV button */}
           <a href="/Janul Samaranayake.pdf" target="_blank" rel="noopener noreferrer"
              className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold
-                        border border-purple-500/50 text-purple-300 hover:bg-purple-500/10 transition shrink-0">
+                        bg-white text-black hover:bg-violet-200 transition shrink-0">
             View CV ↗
           </a>
 

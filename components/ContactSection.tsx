@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { FaGithub, FaLinkedin, FaEnvelope } from "react-icons/fa";
+import { CircleCheck, CircleAlert } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 
 export default function ContactSection() {
@@ -25,7 +26,7 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="overflow-x-hidden px-4 sm:px-6 py-20 sm:py-28 bg-[#050507] text-white">
+    <section id="contact" className="overflow-x-hidden px-4 sm:px-6 py-20 sm:py-28 bg-[var(--bg)] text-white">
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}
@@ -34,7 +35,7 @@ export default function ContactSection() {
             <span className="sec-num">07</span>
             <div>
               <p className="text-xs uppercase tracking-[0.3em] text-purple-400 mb-1">Get in touch</p>
-              <h2 className="text-3xl sm:text-4xl font-extrabold">Contact</h2>
+              <h2 className="text-4xl sm:text-5xl">Let&apos;s <span className="font-accent text-violet-300">talk</span></h2>
               <div className="mt-2 h-[2px] w-20 sm:w-24 bg-gradient-to-r from-purple-500 to-transparent rounded-full" />
             </div>
           </div>
@@ -47,9 +48,9 @@ export default function ContactSection() {
           <ScrollReveal direction="up" delay={100}>
             <div className="space-y-4 sm:space-y-5">
               <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
-                Have a project, collaboration, or opportunity?
-                I&apos;m open to internships, freelance work, and full-time full-stack roles.
-                Let&apos;s build something great together.
+                Have a product, a system to build, or an idea worth exploring?
+                Whether it&apos;s web, mobile, backend or cloud — let&apos;s talk and
+                build something great together.
               </p>
 
               {/* Contact links */}
@@ -76,10 +77,10 @@ export default function ContactSection() {
                 ))}
               </div>
 
-              {/* Availability */}
+              {/* Current role */}
               <div className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                <p className="text-xs sm:text-sm text-emerald-300">Available for opportunities in 2026</p>
+                <p className="text-xs sm:text-sm text-emerald-300">Currently building software at itZorix</p>
               </div>
             </div>
           </ScrollReveal>
@@ -132,12 +133,12 @@ export default function ContactSection() {
 
               {status === "success" && (
                 <div className="flex items-start gap-2 text-sm text-emerald-400 bg-emerald-400/8 border border-emerald-400/20 px-4 py-3 rounded-xl">
-                  <span className="shrink-0 mt-0.5">✓</span> Message sent! I&apos;ll get back to you soon.
+                  <CircleCheck size={16} className="shrink-0 mt-0.5" aria-hidden /> Message sent! I&apos;ll get back to you soon.
                 </div>
               )}
               {status === "error" && (
                 <div className="flex items-start gap-2 text-sm text-red-400 bg-red-400/8 border border-red-400/20 px-4 py-3 rounded-xl">
-                  <span className="shrink-0 mt-0.5">✗</span> Something went wrong. Please email me directly.
+                  <CircleAlert size={16} className="shrink-0 mt-0.5" aria-hidden /> Something went wrong. Please email me directly.
                 </div>
               )}
             </form>

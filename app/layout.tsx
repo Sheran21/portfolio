@@ -1,26 +1,49 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Instrument_Serif, JetBrains_Mono, Manrope } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Display: characterful variable grotesque for headings
+const display = Bricolage_Grotesque({
+  variable: "--font-display",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Accent: editorial italic serif for emphasis words
+const serif = Instrument_Serif({
+  variable: "--font-serif",
   subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+// Body: clean geometric sans for long-form readability
+const body = Manrope({
+  variable: "--font-body",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+// Mono: labels, numbers, code-ish details
+const mono = JetBrains_Mono({
+  variable: "--font-code",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Janul Samaranayake | Full Stack Developer Portfolio",
+  title: "Janul Samaranayake | Software Engineer",
   description:
-    "Janul Samaranayake | Full Stack Developer specializing in React, Next.js, and Node.js, showcasing projects and skills.",
-  keywords: ["Janul Samaranayake", "Full Stack Developer", "React", "Next.js", "Node.js", "Portfolio", "Web Developer"],
+    "Janul Samaranayake | Software Engineer at itZorix building web, mobile and backend software, cloud services and scalable systems.",
+  keywords: ["Janul Samaranayake", "Software Engineer", "Software Development", "Full Stack", "Mobile Apps", "Backend", "Cloud", "React", "Next.js", "Node.js", "Angular", "Flutter", "Java", "Spring Boot", "PostgreSQL", "Python", "Portfolio"],
   openGraph: {
     title: "Janul Samaranayake Portfolio",
     description:
-      "Full Stack Developer portfolio showcasing projects, skills, and experience in modern web development.",
+      "Software Engineer portfolio: web, mobile and backend software, cloud services and scalable systems.",
     url: "https://portfolio-janulsamaranayake.vercel.app",
     siteName: "Janul Portfolio",
     images: [
@@ -36,7 +59,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Janul Samaranayake Portfolio",
     description:
-      "Full Stack Developer portfolio showcasing projects, skills, and experience in modern web development.",
+      "Software Engineer portfolio: web, mobile and backend software, cloud services and scalable systems.",
     images: ["/preview.png"],
   },
 };
@@ -47,7 +70,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         {/* Google Search Console verification */}
         <meta name="google-site-verification" content="ZSqlA0A0GIasceOVEfgCCzwx0EkA0G5Ri33abUhU-f4" />
@@ -65,16 +88,16 @@ export default function RootLayout({
                 "https://www.linkedin.com/in/janul-samaranayake/",
                 "https://github.com/janulsamaranayake",
               ],
-              jobTitle: "Full Stack Developer",
+              jobTitle: "Software Engineer",
             }),
           }}
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${display.variable} ${serif.variable} ${body.variable} ${mono.variable} antialiased`}
       >
         {/* H1 for SEO */}
-        <h1 className="sr-only">Janul Samaranayake | Full Stack Developer</h1>
+        <h1 className="sr-only">Janul Samaranayake | Software Engineer</h1>
         {children}
       </body>
     </html>
