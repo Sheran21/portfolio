@@ -36,6 +36,8 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  // Base for resolving relative OG/Twitter image URLs (e.g. /preview.png)
+  metadataBase: new URL("https://www.janul-samaranayake.me"),
   title: "Janul Samaranayake | Intern Software Engineer",
   description:
     "Janul Samaranayake | Intern Software Engineer @ itZorix building web, mobile and backend software, cloud services and scalable systems.",
@@ -83,7 +85,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Person",
               name: "Janul Samaranayake",
-              url: "https://portfolio-janulsamaranayake.vercel.app",
+              url: "https://www.janul-samaranayake.me",
               sameAs: [
                 "https://www.linkedin.com/in/janul-samaranayake/",
                 "https://github.com/janulsamaranayake",
