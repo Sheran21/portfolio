@@ -32,7 +32,7 @@ export default function Footer() {
               </span>
             </h3>
             <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-gray-400 leading-relaxed">
-              Software Engineer at itZorix building reliable software end to end —
+              Intern Software Engineer @ itZorix building reliable software end to end -
               web and mobile apps, backend services, APIs and cloud infrastructure.
             </p>
           </div>

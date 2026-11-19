@@ -124,7 +124,7 @@ export default function Projects() {
                 {featured.description}
               </p>
 
-              {/* Tech tags — hidden on very small screens */}
+              {/* Tech tags - hidden on very small screens */}
               <div className="hidden sm:flex flex-wrap gap-1.5 mt-3">
                 {featured.tech.map(t => (
                   <span key={t} className="text-[9px] text-purple-300/70 border border-purple-500/15 bg-purple-500/8 px-2 py-0.5 rounded-full">

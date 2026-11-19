@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
 /**
- * FooterWaves — a lightweight three.js backdrop for the footer.
+ * FooterWaves - a lightweight three.js backdrop for the footer.
  *
  * One THREE.Points draw call: a grid of particles whose wave motion is computed
  * entirely in the vertex shader. Per frame the CPU only updates two uniforms

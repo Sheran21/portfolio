@@ -51,7 +51,7 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Scroll progress bar — always full width at top */}
+      {/* Scroll progress bar - always full width at top */}
       <div className="fixed top-0 left-0 right-0 z-[60] h-[2px]">
         <div
           className="h-full bg-gradient-to-r from-violet-500 via-fuchsia-400 to-lime-200"
@@ -61,12 +61,12 @@ export default function Navbar() {
 
       {/*
         KEY FIX: nav uses w-full with px-3/px-4 padding.
-        No max-w-7xl on the inner row — that was pushing the hamburger
+        No max-w-7xl on the inner row - that was pushing the hamburger
         off-screen on narrow phones because the container exceeded 100vw.
         Instead we use w-full on the flex row and let padding handle spacing.
       */}
       <nav className="fixed top-2 sm:top-3 left-0 right-0 z-50 w-full px-3 sm:px-4">
-        {/* This row is exactly viewport-width minus padding — always fits */}
+        {/* This row is exactly viewport-width minus padding - always fits */}
         <div className="w-full flex items-center justify-between gap-2">
 
           {/* Logo */}
@@ -79,7 +79,7 @@ export default function Navbar() {
             />
           </a>
 
-          {/* Desktop pill nav — hidden on mobile */}
+          {/* Desktop pill nav - hidden on mobile */}
           <div className={`hidden md:flex items-center gap-1 px-3 py-2 rounded-full border transition-all duration-300 ${
             scrolled
               ? "border-white/15 bg-black/75 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.6)]"

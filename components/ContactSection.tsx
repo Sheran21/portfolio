@@ -49,7 +49,7 @@ export default function ContactSection() {
             <div className="space-y-4 sm:space-y-5">
               <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
                 Have a product, a system to build, or an idea worth exploring?
-                Whether it&apos;s web, mobile, backend or cloud — let&apos;s talk and
+                Whether it&apos;s web, mobile, backend or cloud - let&apos;s talk and
                 build something great together.
               </p>
 
@@ -80,7 +80,7 @@ export default function ContactSection() {
               {/* Current role */}
               <div className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                <p className="text-xs sm:text-sm text-emerald-300">Currently building software at itZorix</p>
+                <p className="text-xs sm:text-sm text-emerald-300">Currently building software @ itZorix</p>
               </div>
             </div>
           </ScrollReveal>
@@ -89,7 +89,7 @@ export default function ContactSection() {
           <ScrollReveal direction="up" delay={160}>
             <form onSubmit={handleSubmit} className="space-y-4">
 
-              {/* Name + Email — stacked on mobile, side by side on sm+ */}
+              {/* Name + Email - stacked on mobile, side by side on sm+ */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wider">Name</label>
@@ -97,8 +97,8 @@ export default function ContactSection() {
                     type="text" name="name" value={form.name} required onChange={handleChange}
                     placeholder="Your name"
                     className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10
-                               focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/20
-                               outline-none text-sm text-white placeholder-gray-600 transition min-h-[48px]"
+                                focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/20
+                                outline-none text-sm text-white placeholder-gray-600 transition min-h-[48px]"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -107,8 +107,8 @@ export default function ContactSection() {
                     type="email" name="email" value={form.email} required onChange={handleChange}
                     placeholder="your@email.com"
                     className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10
-                               focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/20
-                               outline-none text-sm text-white placeholder-gray-600 transition min-h-[48px]"
+                                focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/20
+                                outline-none text-sm text-white placeholder-gray-600 transition min-h-[48px]"
                   />
                 </div>
               </div>
@@ -119,14 +119,14 @@ export default function ContactSection() {
                   name="message" value={form.message} rows={5} required onChange={handleChange}
                   placeholder="Tell me about your project or opportunity..."
                   className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10
-                             focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/20
-                             outline-none text-sm text-white placeholder-gray-600 transition resize-none"
+                              focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/20
+                              outline-none text-sm text-white placeholder-gray-600 transition resize-none"
                 />
               </div>
 
               <button type="submit" disabled={loading}
                 className="relative overflow-hidden w-full py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 active:bg-purple-700
-                           disabled:opacity-50 transition font-semibold text-sm group min-h-[52px]">
+                            disabled:opacity-50 transition font-semibold text-sm group min-h-[52px]">
                 <span className="relative z-10">{loading ? "Sending…" : "Send Message →"}</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-fuchsia-500 opacity-0 group-hover:opacity-100 transition duration-300" />
               </button>

@@ -12,7 +12,7 @@ export default function SkillCube({ label, color }: SkillCubeProps) {
 
   return (
     <div className="group relative">
-      {/* Outer neon glow — only paints on hover, not every frame */}
+      {/* Outer neon glow - only paints on hover, not every frame */}
       <div
         className="absolute -inset-4 rounded-3xl blur-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-50 pointer-events-none"
         style={{ backgroundColor: color }}
@@ -76,7 +76,7 @@ export default function SkillCube({ label, color }: SkillCubeProps) {
           />
         </div>
 
-        {/* Ground shadow — GPU opacity transition only */}
+        {/* Ground shadow - GPU opacity transition only */}
         <div
           className="mx-auto h-3 w-20 sm:w-24 rounded-full bg-black/60 blur-md mt-1 transition-all duration-500 group-hover:opacity-90 group-hover:scale-110"
           style={{ willChange: "transform, opacity" }}

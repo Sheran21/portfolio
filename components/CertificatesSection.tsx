@@ -62,7 +62,7 @@ export default function CertificatesSection() {
         </div>
       </div>
 
-      {/* Scrolling marquee — touch-friendly (no pointer-events needed) */}
+      {/* Scrolling marquee - touch-friendly (no pointer-events needed) */}
       <div className="relative mb-8 sm:mb-10 overflow-hidden border-y border-white/5 bg-white/[0.015] py-3">
         <style>{`
           @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -77,7 +77,7 @@ export default function CertificatesSection() {
         </div>
       </div>
 
-      {/* Cards — 1 col mobile, 2 col sm, 3 col lg */}
+      {/* Cards - 1 col mobile, 2 col sm, 3 col lg */}
       <div className="overflow-x-hidden px-4 sm:px-6">
         <div className="mx-auto max-w-6xl">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">

@@ -77,7 +77,7 @@ const LightRays: React.FC<LightRaysProps> = ({
 
   const [isVisible, setIsVisible] = useState(false);
 
-  // Intersection observer — only render when visible
+  // Intersection observer - only render when visible
   useEffect(() => {
     if (!containerRef.current) return;
     const obs = new IntersectionObserver(
@@ -88,7 +88,7 @@ const LightRays: React.FC<LightRaysProps> = ({
     return () => obs.disconnect();
   }, []);
 
-  // Reduced-motion preference — skip WebGL entirely
+  // Reduced-motion preference - skip WebGL entirely
   const prefersReducedMotion =
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -215,7 +215,7 @@ void main() {
       uniforms.rayDir.value = dir;
     };
 
-    // Throttled resize — max once per 200ms
+    // Throttled resize - max once per 200ms
     let resizeTimer: ReturnType<typeof setTimeout> | null = null;
     const onResize = () => {
       if (resizeTimer) return;
@@ -237,7 +237,7 @@ void main() {
       try {
         renderer.render({ scene: mesh });
         s.rafId = requestAnimationFrame(loop);
-      } catch { /* context lost — stop */ }
+      } catch { /* context lost - stop */ }
     };
     s.rafId = requestAnimationFrame(loop);
 

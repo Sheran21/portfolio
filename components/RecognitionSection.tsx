@@ -7,7 +7,7 @@ const achievements: { icon: LucideIcon; title: string; subtitle: string; year: s
   {
     icon: Trophy,
     title: "Best Team Pitch Award",
-    subtitle: "Pitch60 — APIIT",
+    subtitle: "Pitch60 - APIIT",
     year: "2026",
     description: "Recognised for presenting one of the strongest team startup pitches.",
     tier: "gold",
@@ -15,7 +15,7 @@ const achievements: { icon: LucideIcon; title: string; subtitle: string; year: s
   {
     icon: Medal,
     title: "3rd Place Winner",
-    subtitle: "Startup Today — KDU",
+    subtitle: "Startup Today - KDU",
     year: "2026",
     description: "Awarded 3rd place for innovation and entrepreneurial thinking.",
     tier: "bronze",
@@ -47,7 +47,7 @@ const achievements: { icon: LucideIcon; title: string; subtitle: string; year: s
   {
     icon: GraduationCap,
     title: "Nationwide Scholarship",
-    subtitle: "ESOFT — FIT",
+    subtitle: "ESOFT - FIT",
     year: "",
     description: "Completed the nationwide scholarship programme with academic excellence.",
     tier: "default",

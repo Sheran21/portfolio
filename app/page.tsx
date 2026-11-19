@@ -19,8 +19,12 @@ import ScrollReveal from "@/components/ScrollReveal";
 const SplashScreen = dynamic(() => import("@/components/SplashScreen"), { ssr: false });
 
 export default function Home() {
-  const [splashDone, setSplashDone] = useState(false);
-  const handleSplashDone = useCallback(() => setSplashDone(true), []);
+  // revealed: page fades in (starts as the splash begins its exit)
+  // splashGone: splash has finished and unmounts
+  const [revealed, setRevealed] = useState(false);
+  const [splashGone, setSplashGone] = useState(false);
+  const handleReveal = useCallback(() => setRevealed(true), []);
+  const handleSplashDone = useCallback(() => { setRevealed(true); setSplashGone(true); }, []);
 
   // Custom cursor: dot follows instantly, ring trails with easing (fine pointers only)
   useEffect(() => {
@@ -49,8 +53,8 @@ export default function Home() {
       <div id="cursor-dot" aria-hidden />
       <div id="cursor-ring" aria-hidden />
 
-      {/* Splash — always rendered until done, then unmounts */}
-      {!splashDone && <SplashScreen onDone={handleSplashDone} />}
+      {/* Splash - always rendered until done, then unmounts */}
+      {!splashGone && <SplashScreen onDone={handleSplashDone} onReveal={handleReveal} />}
 
       {/*
         Portfolio fades in from slightly below as the splash exits.
@@ -58,13 +62,13 @@ export default function Home() {
       */}
       <div
         id="top"
-        data-ready={splashDone}
+        data-ready={revealed}
         className="bg-[var(--bg)] text-white overflow-x-hidden"
         style={{
-          opacity:    splashDone ? 1 : 0,
+          opacity:    revealed ? 1 : 0,
           // "none" (not translateY(0)) so the fixed navbar isn't trapped in a transformed parent
-          transform:  splashDone ? "none" : "translateY(18px)",
-          transition: splashDone ? "opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1)" : "none",
+          transform:  revealed ? "none" : "translateY(18px)",
+          transition: revealed ? "opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1)" : "none",
         }}
       >
         <Navbar />
