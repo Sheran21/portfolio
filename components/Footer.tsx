@@ -51,7 +51,7 @@ export default function Footer() {
                 </a>
               ))}
               <a href="/Janul Samaranayake.pdf" target="_blank" rel="noopener noreferrer"
-                 className="hover:text-purple-300 transition w-fit py-0.5">View CV</a>
+                  className="hover:text-purple-300 transition w-fit py-0.5">View CV</a>
             </div>
           </div>
 
