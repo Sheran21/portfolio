@@ -38,6 +38,8 @@ const mono = JetBrains_Mono({
 export const metadata: Metadata = {
   // Base for resolving relative OG/Twitter image URLs (e.g. /preview.png)
   metadataBase: new URL("https://www.janul-samaranayake.me"),
+  // Single canonical URL so Google consolidates http/non-www/old-domain variants here
+  alternates: { canonical: "/" },
   title: "Janul Samaranayake | Intern Software Engineer",
   description:
     "Janul Samaranayake | Intern Software Engineer @ itZorix building web, mobile and backend software, cloud services and scalable systems.",
